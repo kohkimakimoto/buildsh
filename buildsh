@@ -25,7 +25,7 @@ set -e
 progname=$(basename $0)
 
 # variables
-BUILDSH_BUILD_IMAGE="kohkimakimoto/buildsh:standard"
+BUILDSH_BUILD_IMAGE="kohkimakimoto/buildsh:latest"
 BUILDSH_ENVS=()
 BUILDSH_DOCKER_OPTIONS="--rm --net=host -w /build -v $PWD:/build -v /var/run/docker.sock:/var/run/docker.sock -e TZ=Asia/Tokyo"
 BUILDSH_CMD=""

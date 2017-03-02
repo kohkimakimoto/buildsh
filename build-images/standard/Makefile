@@ -3,4 +3,4 @@
 default: build
 
 build:
-	docker build -t kohkimakimoto/buildsh:standard .
+	docker build -t kohkimakimoto/buildsh:latest .
