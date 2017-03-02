@@ -2,9 +2,7 @@
 
 #/ Usage: buildsh [<options...>] -- [<commands...>]
 #/
-#/ Run an arbitrary command in the isolated build container.
-#/ If you run a command without any options,
-#/ buildsh boots the container with interactive shell (default bash).
+#/ Convinient docker powered shell script for building, testing and deploying softwares.
 #/
 #/ Options:
 #/     -e, --env <KEY=VALUE>   Set custom environment variables
@@ -17,6 +15,12 @@
 #/ Configuration:
 #/     buildsh loads .buildshrc file if it is existed in your current directory.
 #/     You can set custom environment to change buildsh behavior.
+#/
+#/ Description:
+#/     Run an arbitrary command in the isolated build container.
+#/     If you run a command without any options,
+#/     buildsh boots the container with interactive shell (default bash).
+#/
 #/
 
 set -e
