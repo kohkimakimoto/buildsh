@@ -119,8 +119,10 @@ do
 done
 
 if [  ${#params[@]} -eq 0 ]; then
-    BUILDSH_CMD="/bin/bash"
-    BUILDSH_DOCKER_OPTIONS="$BUILDSH_DOCKER_OPTIONS -i -t"
+    if [ -z "$BUILDSH_CMD" ]; then
+        BUILDSH_CMD="/bin/bash"
+        BUILDSH_DOCKER_OPTIONS="$BUILDSH_DOCKER_OPTIONS -i -t"
+    fi
 else
     BUILDSH_CMD="${params[@]}"
 fi
