@@ -5,7 +5,7 @@ Thumbs.db
 *.iml
 .env
 .vscode/
-/.buildshrc
 .buildsh/
+/.buildshrc
 
 !.gitkeep
