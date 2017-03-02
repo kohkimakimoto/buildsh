@@ -20,7 +20,7 @@ $ buildsh -h
 Usage: buildsh [<options...>] -- [<commands...>]
 
 Run an arbitrary command in the isolated build container.
-If you run a command without any options,
+If you run buildsh without any options,
 buildsh boots the container with interactive shell (default bash).
 
 Options:
