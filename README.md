@@ -7,7 +7,14 @@ WIP...
 ## Installation
 
 ```
-$ git clone https://github.com/kohkimaimoto/buildsh.git ~/.buildsh
+$ git clone https://github.com/kohkimakimoto/buildsh.git ~/.buildsh
 $ echo 'export PATH="$HOME/.buildsh/bin:$PATH"' >> ~/.bash_profile
 ```
 
+## Author
+
+Kohki Makimoto <kohki.makimoto@gmail.com>
+
+## License
+
+The MIT License (MIT)
