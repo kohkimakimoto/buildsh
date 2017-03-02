@@ -2,8 +2,6 @@
 
 Convenient docker powered shell script for building, testing and deploying softwares.
 
-WIP...
-
 ## Installation
 
 Clone git repository and set a $PATH.
@@ -37,6 +35,10 @@ Configuration:
     buildsh loads .buildshrc file if it is existed in your current directory.
     You can set custom environment to change buildsh behavior.
 ```
+
+## Example
+
+WIP...
 
 ## Configuration
 
