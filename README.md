@@ -1,6 +1,6 @@
 # buildsh
 
-Convinient docker powered shell script for building, testing and deploying softwares.
+Convenient docker powered shell script for building, testing and deploying softwares.
 
 WIP...
 
