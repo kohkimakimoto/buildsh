@@ -13,7 +13,7 @@ $ git clone https://github.com/kohkimakimoto/buildsh.git ~/.buildsh
 $ echo 'export PATH="$HOME/.buildsh/bin:$PATH"' >> ~/.bash_profile
 ```
 
-or just donwn load `https://github.com/kohkimakimoto/buildsh/blob/master/bin/buildsh`, and assign execute permission to the file. 
+or just donwnload `https://github.com/kohkimakimoto/buildsh/blob/master/bin/buildsh`, and assign execute permission to the file. 
 
 After get a `buildsh`, run `buildsh -h` to check working.
 
