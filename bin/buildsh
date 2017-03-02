@@ -5,8 +5,9 @@
 #/ Convenient docker powered shell script for building, testing and deploying softwares.
 #/
 #/ Options:
-#/     -e, --env <KEY=VALUE>   Set custom environment variables
-#/     -h, --help              Show help
+#/     -e, --env <KEY=VALUE>      Set custom environment variables.
+#/     -h, --help                 Show help.
+#/     --clean                    Remove cache.
 #/
 #/ Examples:
 #/     buildsh
@@ -21,21 +22,26 @@
 #/     If you run a command without any options,
 #/     buildsh boots the container with interactive shell (default bash).
 #/
+#/ See also:
+#/     https://github.com/kohkimakimoto/buildsh
 #/
-
 set -e
 
 # progname
 progname=$(basename $0)
 
 # variables
-BUILDSH_BUILD_IMAGE="kohkimakimoto/buildsh:latest"
-BUILDSH_ENVS=()
+BUILDSH_DOCKER_IMAGE="kohkimakimoto/buildsh:latest"
 BUILDSH_DOCKER_OPTIONS="--rm -w /build -v $PWD:/build -e TZ=Asia/Tokyo"
 # this is example DinD config
 # BUILDSH_DOCKER_OPTIONS="--rm -w /build -v $PWD:/build -e TZ=Asia/Tokyo --net=host  -v /var/run/docker.sock:/var/run/docker.sock"
+BUILDSH_ENV=()
+BUILDSH_DATA_DIR="$PWD/.buildsh"
+BUILDSH_CACHE_DIR="$BUILDSH_DATA_DIR/cache"
+BUILDSH_RCFILE="$PWD/.buildshrc"
 BUILDSH_CMD=""
 
+# functions
 abort() {
   { if [ "$#" -eq 0 ]; then cat -
     else echo "${progname} error: $*"
@@ -67,8 +73,22 @@ abs_dirname() {
   cd "$cwd"
 }
 
-if [ -f "$PWD/.buildshrc" ]; then
-    . $PWD/.buildshrc
+make_data_dir() {
+    mkdir -p $BUILDSH_DATA_DIR
+}
+
+make_cache_dir() {
+    mkdir -p $BUILDSH_CACHE_DIR
+}
+
+clean_cache() {
+    if [ -d "$BUILDSH_CACHE_DIR" ]; then
+        rm -rf "$BUILDSH_CACHE_DIR"
+    fi
+}
+
+if [ -f "$BUILDSH_RCFILE" ]; then
+    . $BUILDSH_RCFILE
 fi
 
 # parse arguments and options.
@@ -84,11 +104,15 @@ do
             print_help
             exit 0
             ;;
+        '--clean')
+            clean_cache
+            exit 0
+            ;;
         '-e'|'--env' )
             if [[ -z "${2:-}" ]] || [[ "${2:-}" =~ ^-+ ]]; then
                 abort "option '$1' requires an argument."
             fi
-            BUILDSH_ENVS+=( "$2" )
+            BUILDSH_ENV+=( "$2" )
             shift 2
             ;;
         '-e='*)
@@ -96,7 +120,7 @@ do
             if [ -z "$optval" ]; then
                 abort "option '$1' requires an argument."
             fi
-            BUILDSH_ENVS+=( "$optval" )
+            BUILDSH_ENV+=( "$optval" )
             shift 1
             ;;
         '--env='*)
@@ -104,7 +128,7 @@ do
             if [ -z "$optval" ]; then
                 abort "option '$1' requires an argument."
             fi
-            BUILDSH_ENVS+=( "$optval" )
+            BUILDSH_ENV+=( "$optval" )
             shift 1
             ;;
         '--'|'-' )
@@ -133,8 +157,8 @@ else
     BUILDSH_CMD="${params[@]}"
 fi
 
-if [ "${#BUILDSH_ENVS[@]}" -gt 0 ]; then
-    for v in "${BUILDSH_ENVS[@]}"
+if [ "${#BUILDSH_ENV[@]}" -gt 0 ]; then
+    for v in "${BUILDSH_ENV[@]}"
     do
         BUILDSH_DOCKER_OPTIONS="$BUILDSH_DOCKER_OPTIONS -e $v"
     done
@@ -144,5 +168,5 @@ docker run \
   $BUILDSH_DOCKER_OPTIONS \
   -e "BUILDSH=1" \
   -e "BUILDSH_USER=$(id -u):$(id -g)" \
-  $BUILDSH_BUILD_IMAGE \
+  $BUILDSH_DOCKER_IMAGE \
   $BUILDSH_CMD
