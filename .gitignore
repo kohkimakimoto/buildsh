@@ -6,6 +6,7 @@ Thumbs.db
 .env
 .vscode/
 .buildsh/
+cache/
 /.buildshrc
 
 !.gitkeep
