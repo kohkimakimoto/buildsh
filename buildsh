@@ -1,0 +1,140 @@
+#!/usr/bin/env bash
+
+#/ Usage: buildsh [<options...>] -- [<commands...>]
+#/
+#/ Run an arbitrary command in the isolated build container.
+#/ If you run a command without any options,
+#/ buildsh boots the container with interactive shell (default bash).
+#/
+#/ Options:
+#/     -e, --env <KEY=VALUE>   Set custom environment variables
+#/     -h, --help              Show help
+#/
+#/ Examples:
+#/     buildsh
+#/     buildsh -- ls -la
+#/
+#/ Configuration:
+#/     buildsh loads .buildshrc file if it is existed in your current directory.
+#/     You can set custom environment to change buildsh behavior.
+#/
+
+set -e
+
+# progname
+progname=$(basename $0)
+
+# variables
+BUILDSH_BUILD_IMAGE="kohkimakimoto/buildsh:standard"
+BUILDSH_ENVS=()
+BUILDSH_DOCKER_OPTIONS="--rm --net=host -w /build -v $PWD:/build -v /var/run/docker.sock:/var/run/docker.sock -e TZ=Asia/Tokyo"
+BUILDSH_CMD=""
+
+abort() {
+  { if [ "$#" -eq 0 ]; then cat -
+    else echo "${progname} error: $*"
+    fi
+  } >&2
+  exit 1
+}
+
+print_help() {
+    local filepath="$(abs_dirname "$0")/$progname"
+    grep '^#/' <"$filepath" | cut -c4-
+}
+
+resolve_link() {
+  $(type -p greadlink readlink | head -1) "$1"
+}
+
+abs_dirname() {
+  local cwd="$(pwd)"
+  local path="$1"
+
+  while [ -n "$path" ]; do
+    cd "${path%/*}"
+    local name="${path##*/}"
+    path="$(resolve_link "$name" || true)"
+  done
+
+  pwd
+  cd "$cwd"
+}
+
+if [ -f "$PWD/.buildshrc" ]; then
+    . $PWD/.buildshrc
+fi
+
+# parse arguments and options.
+declare -a params=()
+for opt in "$@"
+do
+    case "$opt" in
+        '-h')
+            print_help
+            exit 0
+            ;;
+        '--help')
+            print_help
+            exit 0
+            ;;
+        '-e'|'--env' )
+            if [[ -z "${2:-}" ]] || [[ "${2:-}" =~ ^-+ ]]; then
+                abort "option '$1' requires an argument."
+            fi
+            BUILDSH_ENVS+=( "$2" )
+            shift 2
+            ;;
+        '-e='*)
+            optval="${opt:3}"
+            if [ -z "$optval" ]; then
+                abort "option '$1' requires an argument."
+            fi
+            BUILDSH_ENVS+=( "$optval" )
+            shift 1
+            ;;
+        '--env='*)
+            optval="${opt:6}"
+            if [ -z "$optval" ]; then
+                abort "option '$1' requires an argument."
+            fi
+            BUILDSH_ENVS+=( "$optval" )
+            shift 1
+            ;;
+        '--'|'-' )
+            shift 1
+            params+=( "$@" )
+            break
+            ;;
+        -*)
+            abort "illegal option -- '$(echo $1 | sed 's/^-*//')'"
+            ;;
+        *)
+            if [[ ! -z "${1:-}" ]] && [[ ! "${1:-}" =~ ^-+ ]]; then
+                params+=( "$1" )
+                shift 1
+            fi
+            ;;
+    esac
+done
+
+if [  ${#params[@]} -eq 0 ]; then
+    BUILDSH_CMD="/bin/bash"
+    BUILDSH_DOCKER_OPTIONS="$BUILDSH_DOCKER_OPTIONS -i -t"
+else
+    BUILDSH_CMD="${params[@]}"
+fi
+
+if [ "${#BUILDSH_ENVS[@]}" -gt 0 ]; then
+    for v in "${BUILDSH_ENVS[@]}"
+    do
+        BUILDSH_DOCKER_OPTIONS="$BUILDSH_DOCKER_OPTIONS -e $v"
+    done
+fi
+
+docker run \
+  $BUILDSH_DOCKER_OPTIONS \
+  -e "BUILDSH=1" \
+  -e "BUILDSH_USER=$(id -u):$(id -g)" \
+  $BUILDSH_BUILD_IMAGE \
+  $BUILDSH_CMD
