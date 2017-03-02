@@ -31,7 +31,9 @@ progname=$(basename $0)
 # variables
 BUILDSH_BUILD_IMAGE="kohkimakimoto/buildsh:latest"
 BUILDSH_ENVS=()
-BUILDSH_DOCKER_OPTIONS="--rm --net=host -w /build -v $PWD:/build -v /var/run/docker.sock:/var/run/docker.sock -e TZ=Asia/Tokyo"
+BUILDSH_DOCKER_OPTIONS="--rm -w /build -v $PWD:/build -e TZ=Asia/Tokyo"
+# this is example DinD config
+# BUILDSH_DOCKER_OPTIONS="--rm -w /build -v $PWD:/build -e TZ=Asia/Tokyo --net=host  -v /var/run/docker.sock:/var/run/docker.sock"
 BUILDSH_CMD=""
 
 abort() {
