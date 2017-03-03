@@ -2,8 +2,6 @@
 
 #/ Usage: buildsh [<options...>] -- [<commands...>]
 #/
-#/ Convenient docker powered shell script for building, testing and deploying softwares.
-#/
 #/ Options:
 #/     -e, --env <KEY=VALUE>      Set custom environment variables.
 #/     -h, --help                 Show help.

@@ -1,6 +1,6 @@
 # buildsh
 
-Convenient docker powered shell script for building, testing and deploying softwares.
+Buildsh is docker powered shell script that make it easy to run isolated environment for building, testing and deploying softwares.
 
 ## Installation
 
