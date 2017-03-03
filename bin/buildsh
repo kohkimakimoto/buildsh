@@ -109,9 +109,13 @@ envvar() {
     BUILDSH_ENV+=( "$1" )
 }
 
-container_home() {
+home_in_container() {
     BUILDSH_CONTAINER_HOME="$1"
     BUILDSH_CONTAINER_WORKDIR="$BUILDSH_CONTAINER_HOME"
+}
+
+docker_image() {
+    BUILDSH_DOCKER_IMAGE="$1"
 }
 
 # load rcfile
