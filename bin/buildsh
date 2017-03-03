@@ -27,19 +27,22 @@
 #/
 set -e
 
-# progname
-progname=$(basename $0)
 
 # variables
 BUILDSH_DOCKER_IMAGE="kohkimakimoto/buildsh:latest"
-BUILDSH_DOCKER_OPTIONS="--rm -w /build -v $PWD:/build -e TZ=Asia/Tokyo"
+BUILDSH_DOCKER_OPTIONS="--rm -e TZ=Asia/Tokyo"
 # this is example DinD config
 # BUILDSH_DOCKER_OPTIONS="--rm -w /build -v $PWD:/build -e TZ=Asia/Tokyo --net=host  -v /var/run/docker.sock:/var/run/docker.sock"
 BUILDSH_ENV=()
-BUILDSH_DATA_DIR="$PWD/.buildsh"
-BUILDSH_CACHE_DIR="$BUILDSH_DATA_DIR/cache"
 BUILDSH_RCFILE="$PWD/.buildshrc"
+BUILDSH_HOME="$PWD"
+BUILDSH_CONTAINER_HOME="/build"
+BUILDSH_CONTAINER_WORKDIR="/build"
 BUILDSH_CMD=""
+BUILDSH_USE_CACHE=""
+
+# internal variables
+progname=$(basename $0)
 
 # functions
 abort() {
@@ -73,23 +76,25 @@ abs_dirname() {
   cd "$cwd"
 }
 
-make_data_dir() {
-    mkdir -p $BUILDSH_DATA_DIR
-}
-
-make_cache_dir() {
-    mkdir -p $BUILDSH_CACHE_DIR
-}
-
 clean_cache() {
-    if [ -d "$BUILDSH_CACHE_DIR" ]; then
-        rm -rf "$BUILDSH_CACHE_DIR"
+    if [ -n "$buildsh_cachedir" ]; then
+        if [ -d "$buildsh_cachedir" ]; then
+            rm -rf "$buildsh_cachedir"
+        fi
+        mkdir -p $buildsh_cachedir
     fi
+}
+
+use_cache() {
+    BUILDSH_USE_CACHE=1
 }
 
 if [ -f "$BUILDSH_RCFILE" ]; then
     . $BUILDSH_RCFILE
 fi
+
+# update internal variables
+buildsh_cachedir="$BUILDSH_HOME/.buildsh/cache"
 
 # parse arguments and options.
 declare -a params=()
@@ -157,15 +162,26 @@ else
     BUILDSH_CMD="${params[@]}"
 fi
 
+buildsh_env_options=""
 if [ "${#BUILDSH_ENV[@]}" -gt 0 ]; then
     for v in "${BUILDSH_ENV[@]}"
     do
-        BUILDSH_DOCKER_OPTIONS="$BUILDSH_DOCKER_OPTIONS -e $v"
+        buildsh_env_options="$buildsh_env_options -e $v"
     done
 fi
 
+buildsh_env_for_cache=""
+if [ -n "$BUILDSH_USE_CACHE" ]; then
+    mkdir -p $buildsh_cachedir
+    buildsh_env_for_cache="-e BUILDSH_USE_CACHE=1 -e BUILDSH_CACHEDIR=$BUILDSH_CONTAINER_HOME/.buildsh/cache"
+fi
+
 docker run \
+  -w $BUILDSH_CONTAINER_WORKDIR \
+  -v $BUILDSH_HOME:$BUILDSH_CONTAINER_HOME \
   $BUILDSH_DOCKER_OPTIONS \
+  $buildsh_env_for_cache \
+  $buildsh_env_options \
   -e "BUILDSH=1" \
   -e "BUILDSH_USER=$(id -u):$(id -g)" \
   $BUILDSH_DOCKER_IMAGE \
