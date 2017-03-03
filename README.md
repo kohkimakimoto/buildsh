@@ -44,7 +44,11 @@ home_in_container "/build/src/github.com/kohkimakimoto/buildsh"
 
 WIP...
 
-## Create Custom Image
+## Supported Docker Images
+
+* [kohkimakimoto/buildsh](https://hub.docker.com/r/kohkimakimoto/buildsh/) *default
+
+## Use Custom Image
 
 WIP...
 
