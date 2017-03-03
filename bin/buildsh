@@ -85,10 +85,25 @@ clean_cache() {
     fi
 }
 
+# utility functions for .buildshrc
 use_cache() {
     BUILDSH_USE_CACHE=1
 }
 
+docker_option() {
+    BUILDSH_DOCKER_OPTIONS="$BUILDSH_DOCKER_OPTIONS $1"
+}
+
+envvar() {
+    BUILDSH_ENV+=( "$1" )
+}
+
+container_home() {
+    BUILDSH_CONTAINER_HOME="$1"
+    BUILDSH_CONTAINER_WORKDIR="$BUILDSH_CONTAINER_HOME"
+}
+
+# load rcfile
 if [ -f "$BUILDSH_RCFILE" ]; then
     . $BUILDSH_RCFILE
 fi
