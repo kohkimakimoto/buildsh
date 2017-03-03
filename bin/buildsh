@@ -7,6 +7,7 @@
 #/ Options:
 #/     -e, --env <KEY=VALUE>      Set custom environment variables.
 #/     -h, --help                 Show help.
+#/     -u, --self-update          Update buildsh.
 #/     --clean                    Remove cache.
 #/
 #/ Examples:
@@ -26,7 +27,6 @@
 #/     https://github.com/kohkimakimoto/buildsh
 #/
 set -e
-
 
 # variables
 BUILDSH_DOCKER_IMAGE="kohkimakimoto/buildsh:latest"
@@ -85,6 +85,10 @@ clean_cache() {
     fi
 }
 
+self_update() {
+    git pull origin master
+}
+
 # utility functions for .buildshrc
 use_cache() {
     BUILDSH_USE_CACHE=1
@@ -126,6 +130,10 @@ do
             ;;
         '--clean')
             clean_cache
+            exit 0
+            ;;
+        '-u'|'--self-update')
+            self_update
             exit 0
             ;;
         '-e'|'--env' )
