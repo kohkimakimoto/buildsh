@@ -90,7 +90,7 @@ RUN cd /opt \
 ENV PATH /opt/yarn/bin:$PATH
 
 # PHP
-ENV PHP_VERSION 7.1.1
+ENV PHP_VERSION 7.1.2
 RUN git clone https://github.com/madumlao/phpenv.git /opt/phpenv \
  && git clone https://github.com/php-build/php-build.git /opt/phpenv/plugins/php-build
 ENV PHPENV_ROOT /opt/phpenv
@@ -99,14 +99,15 @@ RUN phpenv install ${PHP_VERSION} && phpenv global ${PHP_VERSION} && phpenv reha
 # composer
 RUN curl -L https://getcomposer.org/composer.phar -o /usr/bin/composer && chmod 755 /usr/bin/composer
 
-# Commented out Ruby installation. Because it is very slow and I don't use Ruby...
-# # Ruby
-# ENV RUBY_VERSION 2.3.3
-# RUN git clone https://github.com/rbenv/rbenv.git /opt/rbenv \
-#  && git clone https://github.com/rbenv/ruby-build.git /opt/rbenv/plugins/ruby-build
-# ENV RBENV_ROOT /opt/rbenv
-# ENV PATH $RBENV_ROOT/shims:$RBENV_ROOT/bin:$PATH
-# RUN rbenv install ${RUBY_VERSION} && rbenv global ${RUBY_VERSION} && rbenv rehash
+# Ruby
+ENV RUBY_VERSION 2.3.3
+RUN git clone https://github.com/rbenv/rbenv.git /opt/rbenv \
+ && git clone https://github.com/rbenv/ruby-build.git /opt/rbenv/plugins/ruby-build
+ENV RBENV_ROOT /opt/rbenv
+ENV PATH $RBENV_ROOT/shims:$RBENV_ROOT/bin:$PATH
+RUN rbenv install ${RUBY_VERSION} && rbenv global ${RUBY_VERSION} && rbenv rehash
+# bundler
+RUN gem install bundler
 
 # Go
 ENV GOVERSION 1.8
@@ -120,7 +121,7 @@ ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 RUN sed -i -e 's/Defaults    env_reset/#Defaults    env_reset/' /etc/sudoers \
     && sed -i -e 's/Defaults    secure_path/#Defaults    secure_path/' /etc/sudoers \
     && echo "%sudo	ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
-    && echo 'Defaults    env_keep +=  "PATH GOPATH GOVERSION PYENV_ROOT"' >> /etc/sudoers
+    && echo 'Defaults    env_keep +=  "PATH GOPATH GOVERSION"' >> /etc/sudoers
 
 # misc
 # wait-for-it
