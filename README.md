@@ -1,6 +1,11 @@
-# buildsh
+# Buildsh
 
 Buildsh is docker powered shell script that make it easy to run isolated environment for building, testing and deploying softwares.
+
+## Requirements
+
+* Docker
+* Bash
 
 ## Installation
 
@@ -19,16 +24,18 @@ Usage: buildsh [<options...>] -- [<commands...>]
 ...
 ```
 
-## Example
+## Usage
 
 WIP...
 
 ## Configuration
 
-buildsh loads configuration from `.buildshrc` in your current working directory. Here is an example:
+Buildsh loads configuration from `.buildshrc` in your current working directory. 
+Here is an example:
 
 ```sh
 use_cache
+docker_image      "kohkimakimoto/buildsh:latest"
 docker_option     "--net=host"
 docker_option     "-v=/var/run/docker.sock:/var/run/docker.sock"
 envvar            "FOO=bar"
