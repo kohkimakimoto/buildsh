@@ -16,22 +16,7 @@ After get a `buildsh`, run `buildsh -h` to check working.
 ```
 $ buildsh -h
 Usage: buildsh [<options...>] -- [<commands...>]
-
-Run an arbitrary command in the isolated build container.
-If you run buildsh without any options,
-buildsh boots the container with interactive shell (default bash).
-
-Options:
-    -e, --env <KEY=VALUE>   Set custom environment variables
-    -h, --help              Show help
-
-Examples:
-    buildsh
-    buildsh -- ls -la
-
-Configuration:
-    buildsh loads .buildshrc file if it is existed in your current directory.
-    You can set custom environment to change buildsh behavior.
+...
 ```
 
 ## Example
