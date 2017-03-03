@@ -28,23 +28,7 @@
 #/
 set -e
 
-# variables
-BUILDSH_DOCKER_IMAGE="kohkimakimoto/buildsh:latest"
-BUILDSH_DOCKER_OPTIONS="--rm -e TZ=Asia/Tokyo"
-# this is example DinD config
-# BUILDSH_DOCKER_OPTIONS="--rm -w /build -v $PWD:/build -e TZ=Asia/Tokyo --net=host  -v /var/run/docker.sock:/var/run/docker.sock"
-BUILDSH_ENV=()
-BUILDSH_RCFILE="$PWD/.buildshrc"
-BUILDSH_HOME="$PWD"
-BUILDSH_CONTAINER_HOME="/build"
-BUILDSH_CONTAINER_WORKDIR="/build"
-BUILDSH_CMD=""
-BUILDSH_USE_CACHE=""
-
-# internal variables
-progname=$(basename $0)
-
-# functions
+# common functions
 abort() {
   { if [ "$#" -eq 0 ]; then cat -
     else echo "${progname} error: $*"
@@ -76,6 +60,28 @@ abs_dirname() {
   cd "$cwd"
 }
 
+if [ -z "$BUILDSH_ROOT" ]; then
+    BUILDSH_ROOT=$(abs_dirname "$(abs_dirname "$0")")
+    export BUILDSH_ROOT
+fi
+
+# variables
+BUILDSH_DOCKER_IMAGE="kohkimakimoto/buildsh:latest"
+BUILDSH_DOCKER_OPTIONS="--rm -e TZ=Asia/Tokyo"
+# this is example DinD config
+# BUILDSH_DOCKER_OPTIONS="--rm -w /build -v $PWD:/build -e TZ=Asia/Tokyo --net=host  -v /var/run/docker.sock:/var/run/docker.sock"
+BUILDSH_ENV=()
+BUILDSH_RCFILE="$PWD/.buildshrc"
+BUILDSH_HOME="$PWD"
+BUILDSH_CONTAINER_HOME="/build"
+BUILDSH_CONTAINER_WORKDIR="/build"
+BUILDSH_CMD=""
+BUILDSH_USE_CACHE=""
+
+# internal variables
+progname=$(basename $0)
+
+# actions
 clean_cache() {
     if [ -n "$buildsh_cachedir" ]; then
         if [ -d "$buildsh_cachedir" ]; then
@@ -86,6 +92,7 @@ clean_cache() {
 }
 
 self_update() {
+    cd $BUILDSH_ROOT
     git pull origin master
 }
 
