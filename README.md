@@ -25,6 +25,16 @@ WIP...
 
 ## Configuration
 
+buildsh loads configuration from `.buildshrc` in your current working directory. Here is an example:
+
+```sh
+use_cache
+docker_option     "--net=host"
+docker_option     "-v=/var/run/docker.sock:/var/run/docker.sock"
+envvar            "FOO=bar"
+home_in_container "/build/src/github.com/kohkimakimoto/buildsh"
+```
+
 WIP...
 
 ## Create Custom Image
