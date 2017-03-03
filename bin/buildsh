@@ -66,8 +66,6 @@ fi
 # variables
 BUILDSH_DOCKER_IMAGE="kohkimakimoto/buildsh:latest"
 BUILDSH_DOCKER_OPTIONS="--rm -e TZ=Asia/Tokyo"
-# this is example DinD config
-# BUILDSH_DOCKER_OPTIONS="--rm -w /build -v $PWD:/build -e TZ=Asia/Tokyo --net=host  -v /var/run/docker.sock:/var/run/docker.sock"
 BUILDSH_ENV=()
 BUILDSH_RCFILE="$PWD/.buildshrc"
 BUILDSH_HOME="$PWD"
