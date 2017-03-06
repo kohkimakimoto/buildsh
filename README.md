@@ -79,13 +79,10 @@ WIP...
 
 * [kohkimakimoto/buildsh:latest](https://hub.docker.com/r/kohkimakimoto/buildsh/) *default
 
-
-## Use Custom Image
-
 Buildsh uses a docker image that is customized for some conventions.
+See [build-images/standard/Dockerfile](build-images/standard/Dockerfile) and [build-images/standard/entrypoint.sh](build-images/standard/entrypoint.sh)
 
-See [build-images/standard/Dockerfile](build-images/standard/Dockerfile),
-and [build-images/standard/entrypoint.sh](build-images/standard/entrypoint.sh)
+If you use your custom docker image, you should make a image like the [kohkimakimoto/buildsh:latest](https://hub.docker.com/r/kohkimakimoto/buildsh/).
 
 WIP...
 
