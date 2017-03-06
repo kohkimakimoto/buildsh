@@ -37,7 +37,7 @@ $ buildsh
 Buildsh boots a docker container using the default image [kohkimakimoto/buildsh:latest](https://hub.docker.com/r/kohkimakimoto/buildsh/), and starts bash with interactive mode.
 This container is automatically mounted current working direcotory to `/build` directory,
 And several language runtime (Go, Ruby, PHP, etc...) already be installed. 
-So you can run your project's tests like the following.
+So you can run your project's tests by the following commands.
 
 ```
 # php
