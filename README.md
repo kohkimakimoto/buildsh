@@ -53,7 +53,7 @@ As you exit the shell, the container will be removed automatically.
 $ exit
 ```
 
-Buildsh can be used with arguments.
+If you use buildsh in non interactive mode, you use it with arguments that are the commands executed in the container.
 
 ```
 $ buildsh php phpunit
@@ -79,7 +79,13 @@ WIP...
 
 * [kohkimakimoto/buildsh:latest](https://hub.docker.com/r/kohkimakimoto/buildsh/) *default
 
+
 ## Use Custom Image
+
+Buildsh uses a docker image that is customized for some conventions.
+
+See [build-images/standard/Dockerfile](build-images/standard/Dockerfile),
+and [build-images/standard/entrypoint.sh](build-images/standard/entrypoint.sh)
 
 WIP...
 
