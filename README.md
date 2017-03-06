@@ -1,6 +1,6 @@
 # Buildsh
 
-Buildsh is docker powered shell script that make it easy to run isolated environment for building, testing and deploying softwares.
+Buildsh is docker powered shell that make it easy to run isolated environment for building, testing and deploying softwares.
 
 ## Requirements
 
@@ -46,7 +46,7 @@ WIP...
 
 ## Supported Docker Images
 
-* [kohkimakimoto/buildsh](https://hub.docker.com/r/kohkimakimoto/buildsh/) *default
+* [kohkimakimoto/buildsh:latest](https://hub.docker.com/r/kohkimakimoto/buildsh/) *default
 
 ## Use Custom Image
 
