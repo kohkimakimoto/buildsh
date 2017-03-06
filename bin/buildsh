@@ -2,10 +2,17 @@
 
 #/ Usage: buildsh [<options...>] -- [<commands...>]
 #/
+#/ Buildsh is docker powered shell that make it easy to run isolated
+#/ environment for building, testing and deploying softwares.
+#/
+#/ The MIT License (MIT)
+#/ Kohki Makimoto <kohki.makimoto@gmail.com>
+#/
 #/ Options:
 #/     -e, --env <KEY=VALUE>      Set custom environment variables.
 #/     -h, --help                 Show help.
 #/     -u, --self-update          Update buildsh.
+#/     --rcfile <FILE>            Load configuration from the FILE instead of .buildshrc
 #/     --clean                    Remove cache.
 #/
 #/ Examples:
@@ -13,11 +20,10 @@
 #/     buildsh -- ls -la
 #/
 #/ Configuration:
-#/     buildsh loads .buildshrc file if it is existed in your current directory.
-#/     You can set custom environment to change buildsh behavior.
+#/     Buildsh loads .buildshrc file if it is existed in your current directory.
 #/
 #/ Description:
-#/     Run an arbitrary command in the isolated build container.
+#/     Run an arbitrary command in the isolated container.
 #/     If you run a command without any options,
 #/     buildsh boots the container with interactive shell (default bash).
 #/
@@ -76,6 +82,7 @@ BUILDSH_USE_CACHE=""
 
 # internal variables
 progname=$(basename $0)
+buildsh_env=()
 
 # actions
 clean_cache() {
@@ -114,11 +121,6 @@ docker_image() {
     BUILDSH_DOCKER_IMAGE="$1"
 }
 
-# load rcfile
-if [ -f "$BUILDSH_RCFILE" ]; then
-    . $BUILDSH_RCFILE
-fi
-
 # update internal variables
 buildsh_cachedir="$BUILDSH_HOME/.buildsh/cache"
 
@@ -147,7 +149,7 @@ do
             if [[ -z "${2:-}" ]] || [[ "${2:-}" =~ ^-+ ]]; then
                 abort "option '$1' requires an argument."
             fi
-            BUILDSH_ENV+=( "$2" )
+            buildsh_env+=( "$2" )
             shift 2
             ;;
         '-e='*)
@@ -155,7 +157,7 @@ do
             if [ -z "$optval" ]; then
                 abort "option '$1' requires an argument."
             fi
-            BUILDSH_ENV+=( "$optval" )
+            buildsh_env+=( "$optval" )
             shift 1
             ;;
         '--env='*)
@@ -163,7 +165,22 @@ do
             if [ -z "$optval" ]; then
                 abort "option '$1' requires an argument."
             fi
-            BUILDSH_ENV+=( "$optval" )
+            buildsh_env+=( "$optval" )
+            shift 1
+            ;;
+        '--rcfile' )
+            if [[ -z "${2:-}" ]] || [[ "${2:-}" =~ ^-+ ]]; then
+                abort "option '$1' requires an argument."
+            fi
+            BUILDSH_RCFILE="$2"
+            shift 2
+            ;;
+        '--rcfile='*)
+            optval="${opt:9}"
+            if [ -z "$optval" ]; then
+                abort "option '$1' requires an argument."
+            fi
+            BUILDSH_RCFILE="$optval"
             shift 1
             ;;
         '--'|'-' )
@@ -183,6 +200,11 @@ do
     esac
 done
 
+# load rcfile
+if [ -f "$BUILDSH_RCFILE" ]; then
+    . $BUILDSH_RCFILE
+fi
+
 if [  ${#params[@]} -eq 0 ]; then
     if [ -z "$BUILDSH_CMD" ]; then
         BUILDSH_CMD="/bin/bash"
@@ -195,6 +217,13 @@ fi
 buildsh_env_options=""
 if [ "${#BUILDSH_ENV[@]}" -gt 0 ]; then
     for v in "${BUILDSH_ENV[@]}"
+    do
+        buildsh_env_options="$buildsh_env_options -e $v"
+    done
+fi
+
+if [ "${#buildsh_env[@]}" -gt 0 ]; then
+    for v in "${buildsh_env[@]}"
     do
         buildsh_env_options="$buildsh_env_options -e $v"
     done
