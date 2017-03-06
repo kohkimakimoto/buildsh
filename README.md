@@ -31,7 +31,7 @@ Usage: buildsh [<options...>] -- [<commands...>]
 Try to run `buildsh` without any options.
 
 ```
-buildsh
+$ buildsh
 ```
 
 Buildsh boots docker container by the default image [kohkimakimoto/buildsh:latest](https://hub.docker.com/r/kohkimakimoto/buildsh/), and runs bash with interactive mode.
