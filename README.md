@@ -81,7 +81,7 @@ WIP...
 Buildsh uses a docker image that is customized for some conventions.
 See [build-images/standard/Dockerfile](build-images/standard/Dockerfile) and [build-images/standard/entrypoint.sh](build-images/standard/entrypoint.sh)
 
-If you use your custom docker image, you should make a image like the [kohkimakimoto/buildsh:latest](https://hub.docker.com/r/kohkimakimoto/buildsh/).
+If you use your custom docker image wit buildsh, you should make a image like the [kohkimakimoto/buildsh:latest](https://hub.docker.com/r/kohkimakimoto/buildsh/).
 
 WIP...
 
