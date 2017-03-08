@@ -82,7 +82,7 @@ WIP...
 Buildsh uses a docker image that is customized for some conventions.
 See [build-images/centos7-minimal/Dockerfile](build-images/centos7-minimal/Dockerfile) and [build-images/centos7-minimal/entrypoint.sh](build-images/centos7-minimal/entrypoint.sh)
 
-If you use your custom docker image wit buildsh, you should make a image like the [kohkimakimoto/buildsh:latest](https://hub.docker.com/r/kohkimakimoto/buildsh/).
+If you use your custom docker image with buildsh, you should make a image like the [kohkimakimoto/buildsh](https://hub.docker.com/r/kohkimakimoto/buildsh/).
 
 WIP...
 
