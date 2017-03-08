@@ -76,8 +76,8 @@ WIP...
 
 ## Supported Docker Images
 
-* [kohkimakimoto/buildsh:latest](https://hub.docker.com/r/kohkimakimoto/buildsh/): CentOS7 with some runtimes (*default)
-* [kohkimakimoto/buildsh:centos7-minimal](https://hub.docker.com/r/kohkimakimoto/buildsh/): CentOS7 minimal
+* `kohkimakimoto/buildsh:latest`: CentOS7 with some runtimes (*default) ([Dockerfile](build-images/standard/Dockerfile))
+* `kohkimakimoto/buildsh:centos7-minimal`: CentOS7 minimal ([Dockerfile](build-images/centos7-minimal/Dockerfile))
 
 Buildsh uses a docker image that is customized for some conventions.
 See [build-images/centos7-minimal/Dockerfile](build-images/centos7-minimal/Dockerfile) and [build-images/centos7-minimal/entrypoint.sh](build-images/centos7-minimal/entrypoint.sh)
