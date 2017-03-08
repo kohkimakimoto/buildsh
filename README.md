@@ -35,7 +35,7 @@ $ buildsh
 ```
 
 Buildsh boots a docker container using the default image [kohkimakimoto/buildsh:latest](https://hub.docker.com/r/kohkimakimoto/buildsh/), and starts bash with interactive mode.
-Your current working direcotory is automatically mounted to `/build` directory in the container, and several language runtime (Go, Ruby, PHP, etc...) already be installed. 
+Your current working direcotory is automatically mounted to `/build` directory in the container, and several programming language runtimes (Go, Ruby, PHP, etc...) already be installed. 
 So you can run your project's tests by the following commands.
 
 ```
@@ -76,7 +76,7 @@ WIP...
 
 ## Supported Docker Images
 
-* [kohkimakimoto/buildsh:latest](https://hub.docker.com/r/kohkimakimoto/buildsh/) *default
+* [kohkimakimoto/buildsh:latest](https://hub.docker.com/r/kohkimakimoto/buildsh/): CentOS7 with some runtimes (*default)
 
 Buildsh uses a docker image that is customized for some conventions.
 See [build-images/standard/Dockerfile](build-images/standard/Dockerfile) and [build-images/standard/entrypoint.sh](build-images/standard/entrypoint.sh)
