@@ -2,7 +2,7 @@
 
 Buildsh is docker powered shell that make it easy to run isolated environment for building, testing and deploying softwares.
 
-In implementation, Buildsh is a wrapper of `docker run` command.
+In implementation, buildsh is a wrapper of `docker run` command.
 
 ## Requirements
 
@@ -18,7 +18,7 @@ $ git clone https://github.com/kohkimakimoto/buildsh.git ~/.buildsh
 $ echo 'export PATH="$HOME/.buildsh/bin:$PATH"' >> ~/.bash_profile
 ```
 
-After get a `buildsh`, run `buildsh -h` to check working.
+Run `buildsh -h` to check working.
 
 ```
 $ buildsh -h
@@ -35,8 +35,7 @@ $ buildsh
 ```
 
 Buildsh boots a docker container using the default image [kohkimakimoto/buildsh:latest](https://hub.docker.com/r/kohkimakimoto/buildsh/), and starts bash with interactive mode.
-This container is automatically mounted current working direcotory to `/build` directory,
-And several language runtime (Go, Ruby, PHP, etc...) already be installed. 
+Your current working direcotory is automatically mounted to `/build` directory in the container, and several language runtime (Go, Ruby, PHP, etc...) already be installed. 
 So you can run your project's tests by the following commands.
 
 ```
