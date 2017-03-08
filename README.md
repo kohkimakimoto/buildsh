@@ -34,7 +34,7 @@ Try to run `buildsh` without any options.
 $ buildsh
 ```
 
-Buildsh boots a docker container using the default image [kohkimakimoto/buildsh:latest](https://hub.docker.com/r/kohkimakimoto/buildsh/), and starts bash with interactive mode.
+Buildsh boots a docker container using the default image `kohkimakimoto/buildsh:latest`, and starts bash with interactive mode.
 Your current working direcotory is automatically mounted to `/build` directory in the container, and several programming language runtimes (Go, Ruby, PHP, etc...) already be installed. 
 So you can run your project's tests by the following commands.
 
