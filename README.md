@@ -34,8 +34,8 @@ Try to run `buildsh` without any options.
 $ buildsh
 ```
 
-Buildsh boots a docker container using the default image `kohkimakimoto/buildsh:latest`, and starts bash with interactive mode.
-Your current working direcotory is automatically mounted to `/build` directory in the container, and several programming language runtimes (Go, Ruby, PHP, etc...) already be installed. 
+Buildsh boots a docker container using the default image `kohkimakimoto/buildsh:latest`, and starts bash process with interactive mode.
+Your current working direcotory is automatically mounted to `/build` directory in the container, and several programming language runtimes (Go, Ruby, PHP, etc...) already be installed in the container. 
 So you can run your project's tests by the following commands.
 
 ```
@@ -46,7 +46,7 @@ $ php phpunit
 $ go test ./...
 ```
 
-As you exit the shell, the container will be removed automatically.
+When you exit the shell, the container will be removed automatically.
 
 ```
 $ exit
