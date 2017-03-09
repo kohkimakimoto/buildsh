@@ -69,6 +69,7 @@ docker_image      "kohkimakimoto/buildsh:latest"
 docker_option     "--net=host"
 docker_option     "-v=/var/run/docker.sock:/var/run/docker.sock"
 envvar            "FOO=bar"
+envvar            "FOO2=bar2"
 home_in_container "/build/src/github.com/kohkimakimoto/buildsh"
 ```
 
