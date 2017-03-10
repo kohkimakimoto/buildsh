@@ -98,6 +98,7 @@ Buildsh uses a docker image that is customized for some rules.
 * Default working directory is `/build`.
 * Run a process by the user that is specified by the `BUILDSH_USER` environment variable.
 * If you doesn't specify the command. A container starts interactive shell.
+* Support to run `sudo` without password.
 
 For more detail, see [build-images/centos7-minimal/Dockerfile](build-images/centos7-minimal/Dockerfile) and [build-images/centos7-minimal/entrypoint.sh](build-images/centos7-minimal/entrypoint.sh)
 
