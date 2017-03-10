@@ -77,7 +77,7 @@ Description:
 
 * `use_cache`: If you set it, buildsh creates `.buildsh/cache` directory in a current directory. It also set the environment variable `BUILDSH_USE_CACHE=1` and `BUILDSH_CACHEDIR` which stores the path to the cache directory.
 
-* `docekr_image`: Specifies a docker image to run.
+* `docekr_image`: Specifies a docker image to run. Default `kohkimakimoto/buildsh:latest`.
 
 * `docker_option`: Options that are appended to the `docker run` that is executed by bashsh internally. This config can be used multiple times.
 
