@@ -1,8 +1,7 @@
 # Buildsh
 
-Buildsh is docker powered shell that make it easy to run isolated environment for building, testing and deploying softwares.
-
-In implementation, buildsh is a wrapper of `docker run` command.
+Buildsh is docker powered shell that makes it easy to run isolated environment for building, testing and deploying softwares.
+Internally, buildsh is a wrapper of `docker run` command that is implemented in bash script.
 
 ## Requirements
 
@@ -77,15 +76,21 @@ WIP...
 
 ## Supported Docker Images
 
+You can use the following docker images with buildsh.
+
 * `kohkimakimoto/buildsh:latest`: CentOS7 with some runtimes (*default) ([Dockerfile](build-images/standard/Dockerfile))
 * `kohkimakimoto/buildsh:centos7-minimal`: CentOS7 minimal ([Dockerfile](build-images/centos7-minimal/Dockerfile))
 
-Buildsh uses a docker image that is customized for some conventions.
-See [build-images/centos7-minimal/Dockerfile](build-images/centos7-minimal/Dockerfile) and [build-images/centos7-minimal/entrypoint.sh](build-images/centos7-minimal/entrypoint.sh)
+Buildsh uses a docker image that is customized for some rules.
+
+* Have `/build` directory.
+* Default working directory is `/build`.
+* Run a process by the user that is specified by `BUILDSH_USER` environment variables.
+* If you doesn't specify the command. A container starts interactive shell.
+
+For more detail, see [build-images/centos7-minimal/Dockerfile](build-images/centos7-minimal/Dockerfile) and [build-images/centos7-minimal/entrypoint.sh](build-images/centos7-minimal/entrypoint.sh)
 
 If you want to use your custom docker image with buildsh, you should make a image like the [kohkimakimoto/buildsh](https://hub.docker.com/r/kohkimakimoto/buildsh/).
-
-WIP...
 
 ## Author
 
