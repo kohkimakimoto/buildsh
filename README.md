@@ -60,7 +60,8 @@ $ buildsh php phpunit
 ## Configuration
 
 Buildsh loads configuration from `.buildshrc` in your current working directory. 
-Here is an example:
+
+Example:
 
 ```sh
 use_cache
@@ -72,7 +73,17 @@ envvar            "FOO2=bar2"
 home_in_container "/build/src/github.com/kohkimakimoto/buildsh"
 ```
 
-WIP...
+Description:
+
+* `use_cache`: If you set it, buildsh creates `.buildsh/cache` directory in a current directory. It also set the environment variable `BUILDSH_USE_CACHE=1` and `BUILDSH_CACHEDIR` which stores the path to the cache directory.
+
+* `docekr_image`: Specifies a docker image to run.
+
+* `docker_option`: Options that are appended to the `docker run` that is executed by bashsh internally. This config can be used multiple times.
+
+* `envvar`: Specifies a environment variable in a container. This config can be used multiple times.
+
+* `home_in_container`: Changes mount point and current working directory in a container. Default `/build`.
 
 ## Supported Docker Images
 
