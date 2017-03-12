@@ -2,5 +2,4 @@ services:
     - docker
 
 script:
-  - ./bin/buildsh -h
   - ./bin/buildsh -- php -v && python -V && ruby -v && go version && node -v
