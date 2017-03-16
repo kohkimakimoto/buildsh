@@ -120,8 +120,7 @@ ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 # sudo config
 RUN sed -i -e 's/Defaults    env_reset/#Defaults    env_reset/' /etc/sudoers \
     && sed -i -e 's/Defaults    secure_path/#Defaults    secure_path/' /etc/sudoers \
-    && echo "%sudo	ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
-    && echo 'Defaults    env_keep += "PATH GOPATH GOVERSION"' >> /etc/sudoers
+    && echo 'Defaults    env_keep += "PATH"' >> /etc/sudoers
 
 # misc
 # wait-for-it

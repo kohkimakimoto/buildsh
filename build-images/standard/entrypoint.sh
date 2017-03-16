@@ -22,9 +22,9 @@ if [ -n "$BUILDSH_USER" ]; then
     echo 'buildbot	ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
     if [[ ! $@ ]]; then
-        exec sudo -u buildbot -E /bin/bash
+        exec sudo -u buildbot /bin/bash
     else
-        exec sudo -u buildbot -E $@
+        exec sudo -u buildbot $@
     fi
 else
     if [[ ! $@ ]]; then
