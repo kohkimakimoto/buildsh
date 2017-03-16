@@ -64,21 +64,37 @@ abs_dirname() {
   cd "$cwd"
 }
 
+# variables
 if [ -z "$BUILDSH_ROOT" ]; then
     BUILDSH_ROOT=$(abs_dirname "$(abs_dirname "$0")")
-    export BUILDSH_ROOT
 fi
-
-# variables
-BUILDSH_DOCKER_IMAGE="kohkimakimoto/buildsh:latest"
-BUILDSH_DOCKER_OPTIONS="--rm -e TZ=Asia/Tokyo"
-BUILDSH_ENV=()
-BUILDSH_RCFILE="$PWD/.buildshrc"
-BUILDSH_HOME="$PWD"
-BUILDSH_CONTAINER_HOME="/build"
-BUILDSH_CONTAINER_WORKDIR="/build"
-BUILDSH_CMD=""
-BUILDSH_USE_CACHE=""
+if [ -z "$BUILDSH_DOCKER_IMAGE" ]; then
+    BUILDSH_DOCKER_IMAGE="kohkimakimoto/buildsh:latest"
+fi
+if [ -z "$BUILDSH_DOCKER_OPTIONS" ]; then
+    BUILDSH_DOCKER_OPTIONS="--rm -e TZ=Asia/Tokyo"
+fi
+if [ -z "$BUILDSH_ENV" ]; then
+    BUILDSH_ENV=()
+fi
+if [ -z "$BUILDSH_RCFILE" ]; then
+    BUILDSH_RCFILE="$PWD/.buildshrc"
+fi
+if [ -z "$BUILDSH_HOME" ]; then
+    BUILDSH_HOME="$PWD"
+fi
+if [ -z "$BUILDSH_CONTAINER_HOME" ]; then
+    BUILDSH_CONTAINER_HOME="/build"
+fi
+if [ -z "$BUILDSH_CONTAINER_WORKDIR" ]; then
+    BUILDSH_CONTAINER_WORKDIR="/build"
+fi
+if [ -z "$BUILDSH_CMD" ]; then
+    BUILDSH_CMD=""
+fi
+if [ -z "$BUILDSH_USE_CACHE" ]; then
+    BUILDSH_USE_CACHE=""
+fi
 
 # internal variables
 progname=$(basename $0)
