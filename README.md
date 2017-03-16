@@ -106,7 +106,7 @@ If you want to use your custom docker image with buildsh, you should make a imag
 
 ## Using shebang
 
-If you want to create a script file that are executed by buildsh, You can use a trick to interpret shebang with buildsh. See the following code.
+If you want to create a script file that are executed by buildsh, you can use a trick to interpret shebang with buildsh. See the following example code.
 
 ```sh
 #!/bin/sh
