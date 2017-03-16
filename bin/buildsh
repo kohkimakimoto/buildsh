@@ -89,6 +89,9 @@ fi
 if [ -z "$BUILDSH_CONTAINER_WORKDIR" ]; then
     BUILDSH_CONTAINER_WORKDIR="/build"
 fi
+if [ -z "$BUILDSH_CONTAINER_BUILDSH_ROOT" ]; then
+    BUILDSH_CONTAINER_BUILDSH_ROOT="/.buildsh"
+fi
 if [ -z "$BUILDSH_CMD" ]; then
     BUILDSH_CMD=""
 fi
@@ -135,6 +138,10 @@ home_in_container() {
 
 docker_image() {
     BUILDSH_DOCKER_IMAGE="$1"
+}
+
+disable_buildsh_in_container() {
+    BUILDSH_CONTAINER_BUILDSH_ROOT=""
 }
 
 # update internal variables
@@ -251,12 +258,18 @@ if [ -n "$BUILDSH_USE_CACHE" ]; then
     buildsh_env_for_cache="-e BUILDSH_USE_CACHE=1 -e BUILDSH_CACHEDIR=$BUILDSH_CONTAINER_HOME/.buildsh/cache"
 fi
 
+buildsh_root_mount_option=""
+if [ -n "$BUILDSH_CONTAINER_BUILDSH_ROOT" ]; then
+    buildsh_root_mount_option="-v $BUILDSH_ROOT:$BUILDSH_CONTAINER_BUILDSH_ROOT:ro"
+fi
+
 docker run \
   -w $BUILDSH_CONTAINER_WORKDIR \
   -v $BUILDSH_HOME:$BUILDSH_CONTAINER_HOME \
   $BUILDSH_DOCKER_OPTIONS \
   $buildsh_env_for_cache \
   $buildsh_env_options \
+  $buildsh_root_mount_option \
   -e "BUILDSH=1" \
   -e "BUILDSH_USER=$(id -u):$(id -g)" \
   $BUILDSH_DOCKER_IMAGE \
