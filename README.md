@@ -104,6 +104,29 @@ For more detail, see [build-images/centos7-minimal/Dockerfile](build-images/cent
 
 If you want to use your custom docker image with buildsh, you should make a image like the [kohkimakimoto/buildsh](https://hub.docker.com/r/kohkimakimoto/buildsh/).
 
+## Using shebang
+
+If you want to create a script file that are executed by buildsh, You can use a trick to interpret shebang with buildsh. See the following code.
+
+```sh
+#!/bin/sh
+[ -z "$BUILDSH" ] && exec buildsh "$0" "$@"
+
+# your code is after here...
+echo "I'm in a container!"
+```
+
+You can run it directly after adding an execution permission.
+
+```sh
+$ chmod 755 your_script.sh
+$ ./your_script.sh
+I'm in a container!
+```
+
+
+
+
 ## Author
 
 Kohki Makimoto <kohki.makimoto@gmail.com>
