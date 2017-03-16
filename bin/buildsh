@@ -11,6 +11,7 @@
 #/ Options:
 #/     -e, --env <KEY=VALUE>      Set custom environment variables.
 #/     -h, --help                 Show help.
+#/     -d, --debug                Use debug mode.
 #/     -u, --self-update          Update buildsh.
 #/     --rcfile <FILE>            Load configuration from the FILE instead of .buildshrc
 #/     --clean                    Remove cache.
@@ -74,6 +75,9 @@ fi
 if [ -z "$BUILDSH_DOCKER_OPTIONS" ]; then
     BUILDSH_DOCKER_OPTIONS="--rm -e TZ=Asia/Tokyo"
 fi
+if [ -z "$BUILDSH_ADDITIONAL_DOCKER_OPTIONS" ]; then
+    BUILDSH_ADDITIONAL_DOCKER_OPTIONS=""
+fi
 if [ -z "$BUILDSH_ENV" ]; then
     BUILDSH_ENV=()
 fi
@@ -102,6 +106,7 @@ fi
 # internal variables
 progname=$(basename $0)
 buildsh_env=()
+debug_mode=""
 
 # actions
 clean_cache() {
@@ -168,6 +173,10 @@ do
             self_update
             exit 0
             ;;
+        '-d'|'--debug')
+            debug_mode=1
+            shift 1
+            ;;
         '-e'|'--env' )
             if [[ -z "${2:-}" ]] || [[ "${2:-}" =~ ^-+ ]]; then
                 abort "option '$1' requires an argument."
@@ -223,6 +232,11 @@ do
     esac
 done
 
+if [ -n "$debug_mode" ]; then
+  export PS4='+ [${BASH_SOURCE##*/}:${LINENO}] '
+  set -x
+fi
+
 # load rcfile
 if [ -f "$BUILDSH_RCFILE" ]; then
     . $BUILDSH_RCFILE
@@ -267,6 +281,7 @@ docker run \
   -w $BUILDSH_CONTAINER_WORKDIR \
   -v $BUILDSH_HOME:$BUILDSH_CONTAINER_HOME \
   $BUILDSH_DOCKER_OPTIONS \
+  $BUILDSH_ADDITIONAL_DOCKER_OPTIONS \
   $buildsh_env_for_cache \
   $buildsh_env_options \
   $buildsh_root_mount_option \
