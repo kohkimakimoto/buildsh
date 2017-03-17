@@ -5,16 +5,12 @@ RUN yum -y install \
   epel-release \
   && yum clean all && \
   yum -y install \
-  sudo \
-  && mkdir -p /build \
-  && chmod -R 777 "/build"
+  sudo
 
 # sudo config
 RUN sed -i -e 's/Defaults    env_reset/#Defaults    env_reset/' /etc/sudoers \
     && sed -i -e 's/Defaults    secure_path/#Defaults    secure_path/' /etc/sudoers \
     && echo 'Defaults    env_keep += "PATH"' >> /etc/sudoers
 
-COPY entrypoint.sh /entrypoint.sh
-
 WORKDIR /build
-ENTRYPOINT ["/entrypoint.sh"]
+CMD ["/bin/bash"]

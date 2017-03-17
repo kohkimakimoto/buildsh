@@ -7,6 +7,9 @@ Thumbs.db
 .vscode/
 .buildsh/
 cache/
-/.buildshrc
+/dist
+/buildsh
+/vendor
+/.buildsh.yml
 
 !.gitkeep
