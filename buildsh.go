@@ -211,9 +211,8 @@ func makeEntryPointAndCmd(args []string, c *Config) (string, string, error) {
 	var cmd string
 
 	funcMap := template.FuncMap{
-		"ShellEscape":  shellEscape,
+		"ShellEscape": shellEscape,
 	}
-
 
 	tmpl, err := template.New("T").Funcs(funcMap).Parse(realEntrypointTemplate)
 	if err != nil {
