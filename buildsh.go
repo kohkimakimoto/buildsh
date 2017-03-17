@@ -68,6 +68,21 @@ Options:
     --clean                    Remove cache.
     -h, --help                 Show help.
     -v, --version              Print the version
+
+Examples:
+    buildsh
+    buildsh -- ls -la
+
+Configuration:
+    Buildsh loads .buildsh.yml file if it is existed in your current directory.
+
+Description:
+    Run an arbitrary command in the isolated container.
+    If you run a command without any options,
+    buildsh boots the container with interactive shell (default bash).
+
+See also:
+    https://github.com/kohkimakimoto/buildsh
 `)
 	}
 	flag.Parse()
