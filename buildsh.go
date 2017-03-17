@@ -118,14 +118,12 @@ Options:
 		}
 	}
 
-	var cmd string
 	var dockerOptions = config.DockerOptions
 	if flag.NArg() == 0 {
-		cmd = "/bin/bash"
 		dockerOptions = dockerOptions + " -i -t"
-	} else {
-		cmd = strings.Join(flag.Args(), " ")
 	}
+
+	entrypoint, cmd := makeEntryPointAndCmd(flag.Args(), config)
 
 	// construct docker run command.
 	cmdline := "docker run -w " + config.ContainerWorkdir +
@@ -134,6 +132,7 @@ Options:
 		" " + config.AdditionalDockerOptions +
 		` -e "BUILDSH=1"` +
 		` -e "BUILDSH_USER=$(id -u):$(id -g)"` +
+		` --entrypoint="` + entrypoint + `"` +
 		" " + config.DockerImage +
 		" " + cmd
 
@@ -146,6 +145,19 @@ Options:
 	}
 
 	return status
+}
+
+func makeEntryPointAndCmd(args []string, c *Config) (string, string) {
+	var entrypoint = "/bin/bash"
+	var cmd string
+
+	if len(args) == 0 {
+		cmd = ""
+	} else {
+		cmd = "-c '" + strings.Join(args, " ") + "'"
+	}
+
+	return entrypoint, cmd
 }
 
 type Config struct {
