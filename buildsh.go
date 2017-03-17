@@ -8,7 +8,9 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
+	"bytes"
 	"os/exec"
+	"text/template"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -149,7 +151,10 @@ Options:
 		envForCache = "-e BUILDSH_USE_CACHE=1 -e BUILDSH_CACHEDIR=" + config.ContainerHome + "/.buildsh/cache"
 	}
 
-	entrypoint, cmd := makeEntryPointAndCmd(flag.Args(), config)
+	entrypoint, cmd, err := makeEntryPointAndCmd(flag.Args(), config)
+	if err != nil {
+		panic(err)
+	}
 
 	// construct docker run command.
 	cmdline := "docker run -w " + config.ContainerWorkdir +
@@ -175,17 +180,36 @@ Options:
 	return status
 }
 
-func makeEntryPointAndCmd(args []string, c *Config) (string, string) {
+func makeEntryPointAndCmd(args []string, c *Config) (string, string, error) {
 	var entrypoint = "/bin/bash"
 	var cmd string
 
-	if len(args) == 0 {
-		cmd = ""
-	} else {
-		cmd = "-c '" + strings.Join(args, " ") + "'"
+	tmpl, err := template.New("base").Parse(realEntrypointTemplate)
+	if err != nil {
+		return "", "", err
 	}
 
-	return entrypoint, cmd
+	var mainCommand string
+	if len(args) > 0 {
+		mainCommand = strings.Join(args, " ")
+	} else {
+		mainCommand = "/bin/bash"
+	}
+
+	dict := map[string]interface{}{
+		"Cmd": mainCommand,
+	}
+
+	var b bytes.Buffer
+	err = tmpl.Execute(&b, dict)
+	if err != nil {
+		return "", "", err
+	}
+
+	realEntrypoint := shellEscape(b.String())
+	cmd = " -c " + realEntrypoint
+
+	return entrypoint, cmd, nil
 }
 
 type Config struct {
@@ -290,3 +314,37 @@ func spawn(command string) error {
 	}
 	return cmd.Wait()
 }
+
+func shellEscape(s string) string {
+	return "'" + strings.Replace(s, "'", "'\"'\"'", -1) + "'"
+}
+
+
+var realEntrypointTemplate = `
+set -e
+
+# Workaround to use 'sudo' with arbitrary user id that is specified host machine.
+# You should set '-e' docker run option like the following:
+#   -e BUILDSH_USER="<user_id>:<group_id>"
+if [ -n "$BUILDSH_USER" ]; then
+    # split user_id and group_id
+    OLD_IFS="$IFS"
+    IFS=:
+    arr=($BUILDSH_USER)
+    IFS="$OLD_IFS"
+
+    if [ ${#arr[@]} -ne 2 ]; then
+        echo "'BUILDSH_USER' must be formatted '<user_id>:<group_id>', but $BUILDSH_USER" 1>&2
+        exit 1
+    fi
+
+    # Create buildbot user
+    groupadd --non-unique --gid ${arr[1]} buildbot
+    useradd --non-unique --uid ${arr[0]} --gid ${arr[1]} buildbot
+    echo 'buildbot	ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+    exec sudo -u buildbot {{ .Cmd }}
+else
+    exec {{ .Cmd }}
+fi
+`
