@@ -9,5 +9,6 @@ Thumbs.db
 cache/
 /.buildshrc
 /dist
+/buildsh
 
 !.gitkeep
