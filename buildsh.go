@@ -3,9 +3,15 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/Songmu/wrapcommander"
+	"github.com/pkg/errors"
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
+	"strings"
 )
 
 var (
@@ -36,8 +42,8 @@ func realMain() (status int) {
 	flag.BoolVar(&optDebug, "debug", false, "")
 	flag.BoolVar(&optClean, "clean", false, "")
 
-	flag.StringVar(&optConfig, "config", ".buildsh.yml", "")
-	flag.StringVar(&optConfig, "c", ".buildsh.yml", "")
+	flag.StringVar(&optConfig, "config", "", "")
+	flag.StringVar(&optConfig, "c", "", "")
 
 	flag.Var(&optEnv, "e", "")
 	flag.Var(&optEnv, "env", "")
@@ -69,7 +75,139 @@ Options:
 		return 0
 	}
 
+	config, err := NewConfig()
+	if err != nil {
+		panic(err)
+	}
+
+	if optConfig != "" {
+		config.ConfigFile = optConfig
+	}
+
+	// override config by the config file.
+	if config.ConfigFile != "" {
+		p, err := filepath.Abs(config.ConfigFile)
+		if err != nil {
+			panic(err)
+		}
+
+		b, err := ioutil.ReadFile(p)
+		if err != nil {
+			panic(err)
+		}
+
+		if err := yaml.Unmarshal(b, config); err != nil {
+			panic(err)
+		}
+	} else {
+		wd, err := os.Getwd()
+		if err != nil {
+			panic(errors.Wrap(err, "failed to get working directory."))
+		}
+
+		p := filepath.Join(wd, ".buildsh.yml")
+		if _, err := os.Stat(p); err == nil {
+			b, err := ioutil.ReadFile(p)
+			if err != nil {
+				panic(err)
+			}
+
+			if err := yaml.Unmarshal(b, config); err != nil {
+				panic(err)
+			}
+		}
+	}
+
+	var cmd string
+	var dockerOptions = config.DockerOptions
+	if flag.NArg() == 0 {
+		cmd = "/bin/bash"
+		dockerOptions = dockerOptions + " -i -t"
+	} else {
+		cmd = strings.Join(flag.Args(), " ")
+	}
+
+	// construct docker run command.
+	cmdline := "docker run -w " + config.ContainerWorkdir +
+		" -v " + config.Home + ":" + config.ContainerHome +
+		" " + dockerOptions +
+		" " + config.AdditionalDockerOptions +
+		` -e "BUILDSH=1"` +
+		` -e "BUILDSH_USER=$(id -u):$(id -g)"` +
+		" " + config.DockerImage +
+		" " + cmd
+
+	if optDebug {
+		fmt.Println("[debug] " + cmdline)
+	}
+
+	if err := spawn(cmdline); err != nil {
+		status = wrapcommander.ResolveExitCode(err)
+	}
+
 	return status
+}
+
+type Config struct {
+	DockerImage             string `yaml:"docker_image"`
+	DockerOptions           string `yaml:"docker_options"`
+	AdditionalDockerOptions string `yaml:"additional_docker_options"`
+	ConfigFile              string `yaml:"-"`
+	Home                    string `yaml:"home"`
+	ContainerHome           string `yaml:"container_home"`
+	ContainerWorkdir        string `yaml:"container_workdir"`
+	Cmd                     string `yaml:"cmd"`
+	UseCache                bool   `yaml:"use_cache"`
+}
+
+func NewConfig() (*Config, error) {
+	wd, err := os.Getwd()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get working directory.")
+	}
+
+	c := &Config{
+		DockerImage:             "kohkimakimoto/buildsh:latest",
+		DockerOptions:           "--rm -e TZ=Asia/Tokyo",
+		AdditionalDockerOptions: "",
+		ConfigFile:              "",
+		Home:                    wd,
+		ContainerHome:           "/build",
+		ContainerWorkdir:        "/build",
+		Cmd:                     "",
+		UseCache:                false,
+	}
+
+	// Override default config by the environment variables.
+	if d := os.Getenv("BUILDSH_DOCKER_IMAGE"); d != "" {
+		c.DockerImage = d
+	}
+	if d := os.Getenv("BUILDSH_DOCKER_OPTIONS"); d != "" {
+		c.DockerOptions = d
+	}
+	if d := os.Getenv("BUILDSH_ADDITIONAL_DOCKER_OPTIONS"); d != "" {
+		c.AdditionalDockerOptions = d
+	}
+	if d := os.Getenv("BUILDSH_CONFIG"); d != "" {
+		c.ConfigFile = d
+	}
+	if d := os.Getenv("BUILDSH_HOME"); d != "" {
+		c.Home = d
+	}
+	if d := os.Getenv("BUILDSH_CONTAINER_HOME"); d != "" {
+		c.ContainerHome = d
+	}
+	if d := os.Getenv("BUILDSH_CONTAINER_WORKDIR"); d != "" {
+		c.ContainerWorkdir = d
+	}
+	if d := os.Getenv("BUILDSH_CMD"); d != "" {
+		c.Cmd = d
+	}
+	if d := os.Getenv("BUILDSH_USE_CACHE"); d != "" {
+		c.UseCache = true
+	}
+
+	return c, nil
 }
 
 type stringSlice []string

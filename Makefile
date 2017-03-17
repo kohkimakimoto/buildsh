@@ -25,6 +25,9 @@ dev:  ## Build dev binaru
 	  -ldflags="-w -X main.CommitHash=`git log --pretty=format:%H -n 1`" \
 	  -o="buildsh" .
 
+deps: ## Update dependences
+	glide up
+
 fmt: ## go fmt
 	go fmt $$(go list ./... | grep -v vendor)
 	

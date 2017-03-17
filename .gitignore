@@ -10,5 +10,6 @@ cache/
 /.buildshrc
 /dist
 /buildsh
+/vendor
 
 !.gitkeep
