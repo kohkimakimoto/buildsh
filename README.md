@@ -1,20 +1,17 @@
 # Buildsh
 
 Buildsh is docker powered shell that makes it easy to run isolated environment for building, testing and deploying softwares.
-Internally, buildsh is a wrapper of `docker run` command that is implemented in bash script.
+Internally, buildsh is a wrapper of `docker run` command that is implemented in GO.
 
 ## Requirements
 
 * Docker
-* Bash
 
 ## Installation
 
-Clone git repository and set a $PATH.
 
 ```
-$ git clone https://github.com/kohkimakimoto/buildsh.git ~/.buildsh
-$ echo 'export PATH="$HOME/.buildsh/bin:$PATH"' >> ~/.bash_profile
+$ go get github.com/kohkimakimoto/buildsh
 ```
 
 Run `buildsh -h` to check working.
@@ -59,18 +56,18 @@ $ buildsh php phpunit
 
 ## Configuration
 
-Buildsh loads configuration from `.buildshrc` in your current working directory. 
+Buildsh loads configuration from `.buildsh.yml` in your current working directory. 
 
 Example:
 
-```sh
-use_cache
-docker_image      "kohkimakimoto/buildsh:latest"
-docker_option     "--net=host"
-docker_option     "-v=/var/run/docker.sock:/var/run/docker.sock"
-envvar            "FOO=bar"
-envvar            "FOO2=bar2"
-home_in_container "/build/src/github.com/kohkimakimoto/buildsh"
+```yaml
+use_cache: true
+docker_image: kohkimakimoto/buildsh:latest
+docker_options: --net=host -v=/var/run/docker.sock:/var/run/docker.sock
+enviroment:
+  FOO: bar
+  FOO2: bar2
+home_in_container: /build/src/github.com/kohkimakimoto/buildsh
 ```
 
 Description:
@@ -79,32 +76,13 @@ Description:
 
 * `docekr_image`: Specifies a docker image to run. Default `kohkimakimoto/buildsh:latest`.
 
-* `docker_option`: Options that are appended to the `docker run` that is executed by bashsh internally. This config can be used multiple times.
+* `docker_options`: Options that are appended to the `docker run` that is executed by bashsh internally.
 
-* `envvar`: Specifies a environment variable in a container. This config can be used multiple times.
+* `environment`: Specifies a environment variable in a container. 
 
 * `home_in_container`: Changes mount point and current working directory in a container. Default `/build`.
 
-## Supported Docker Images
-
-You can use the following docker images with buildsh.
-
-* `kohkimakimoto/buildsh:latest`: CentOS7 with some runtimes (*default) ([Dockerfile](build-images/standard/Dockerfile))
-* `kohkimakimoto/buildsh:centos7-minimal`: CentOS7 minimal ([Dockerfile](build-images/centos7-minimal/Dockerfile))
-
-Buildsh uses a docker image that is customized for some rules.
-
-* Have `/build` directory.
-* Default working directory is `/build`.
-* Run a process by the user that is specified by the `BUILDSH_USER` environment variable.
-* If you doesn't specify the command. A container starts interactive shell.
-* Support to run `sudo` without password.
-
-For more detail, see [build-images/centos7-minimal/Dockerfile](build-images/centos7-minimal/Dockerfile) and [build-images/centos7-minimal/entrypoint.sh](build-images/centos7-minimal/entrypoint.sh)
-
-If you want to use your custom docker image with buildsh, you should make a image like the [kohkimakimoto/buildsh](https://hub.docker.com/r/kohkimakimoto/buildsh/).
-
-## Using shebang
+## Using With Shebang
 
 If you want to create a script file that are executed by buildsh, you can use a trick to interpret shebang with buildsh. See the following example code.
 

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"github.com/Songmu/wrapcommander"
@@ -8,12 +9,11 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
-	"bytes"
 	"os/exec"
-	"text/template"
 	"path/filepath"
 	"runtime"
 	"strings"
+	"text/template"
 )
 
 var (
@@ -120,6 +120,11 @@ Options:
 		}
 	}
 
+	if config.HomeInContainer != "" {
+		config.ContainerHome = config.HomeInContainer
+		config.ContainerWorkdir = config.HomeInContainer
+	}
+
 	// append options
 	var dockerOptions = config.DockerOptions
 	if flag.NArg() == 0 {
@@ -128,9 +133,15 @@ Options:
 
 	// appned env
 	var envOptions = ""
+	if len(config.Environment) > 0 {
+		for k, v := range config.Environment {
+			envOptions = envOptions + " -e " + k + "=" + shellEscape(v)
+		}
+	}
+
 	if len(optEnv) > 0 {
 		for _, v := range optEnv {
-			envOptions = envOptions + " -e " + v
+			envOptions = envOptions + " -e " + shellEscape(v)
 		}
 	}
 
@@ -163,8 +174,8 @@ Options:
 		" " + config.AdditionalDockerOptions +
 		" " + envForCache +
 		" " + envOptions +
-		` -e "BUILDSH=1"` +
-		` -e "BUILDSH_USER=$(id -u):$(id -g)"` +
+		` -e BUILDSH=1` +
+		` -e BUILDSH_USER=$(id -u):$(id -g)` +
 		` --entrypoint="` + entrypoint + `"` +
 		" " + config.DockerImage +
 		" " + cmd
@@ -213,16 +224,17 @@ func makeEntryPointAndCmd(args []string, c *Config) (string, string, error) {
 }
 
 type Config struct {
-	DockerImage             string `yaml:"docker_image"`
-	DockerOptions           string `yaml:"docker_options"`
-	AdditionalDockerOptions string `yaml:"additional_docker_options"`
-	ConfigFile              string `yaml:"-"`
-	Home                    string `yaml:"home"`
-	ContainerHome           string `yaml:"container_home"`
-	ContainerWorkdir        string `yaml:"container_workdir"`
-	Cmd                     string `yaml:"cmd"`
-	UseCache                bool   `yaml:"use_cache"`
-	Cachedir                string `yaml:"cahcedir"`
+	ConfigFile              string            `yaml:"-"`
+	DockerImage             string            `yaml:"docker_image"`
+	DockerOptions           string            `yaml:"docker_options"`
+	AdditionalDockerOptions string            `yaml:"additional_docker_options"`
+	Home                    string            `yaml:"home"`
+	Environment             map[string]string `yaml:"environment"`
+	ContainerHome           string            `yaml:"container_home"`
+	ContainerWorkdir        string            `yaml:"container_workdir"`
+	HomeInContainer         string            `yaml:"home_in_container"`
+	UseCache                bool              `yaml:"use_cache"`
+	Cachedir                string            `yaml:"cahcedir"`
 }
 
 func NewConfig() (*Config, error) {
@@ -232,16 +244,17 @@ func NewConfig() (*Config, error) {
 	}
 
 	c := &Config{
+		ConfigFile:              "",
 		DockerImage:             "kohkimakimoto/buildsh:latest",
 		DockerOptions:           "--rm -e TZ=Asia/Tokyo",
 		AdditionalDockerOptions: "",
-		ConfigFile:              "",
-		Home:                    wd,
-		ContainerHome:           "/build",
-		ContainerWorkdir:        "/build",
-		Cmd:                     "",
-		UseCache:                false,
-		Cachedir:                ".buildsh/cache",
+		Home:             wd,
+		Environment:      map[string]string{},
+		ContainerHome:    "/build",
+		ContainerWorkdir: "/build",
+		HomeInContainer:  "",
+		UseCache:         false,
+		Cachedir:         ".buildsh/cache",
 	}
 
 	// Override default config by the environment variables.
@@ -265,9 +278,6 @@ func NewConfig() (*Config, error) {
 	}
 	if d := os.Getenv("BUILDSH_CONTAINER_WORKDIR"); d != "" {
 		c.ContainerWorkdir = d
-	}
-	if d := os.Getenv("BUILDSH_CMD"); d != "" {
-		c.Cmd = d
 	}
 	if d := os.Getenv("BUILDSH_USE_CACHE"); d != "" {
 		c.UseCache = true
@@ -319,7 +329,6 @@ func shellEscape(s string) string {
 	return "'" + strings.Replace(s, "'", "'\"'\"'", -1) + "'"
 }
 
-
 var realEntrypointTemplate = `
 set -e
 
@@ -343,7 +352,7 @@ if [ -n "$BUILDSH_USER" ]; then
     useradd --non-unique --uid ${arr[0]} --gid ${arr[1]} buildbot
     echo 'buildbot	ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
-    exec sudo -u buildbot {{ .Cmd }}
+    exec sudo -u buildbot -E {{ .Cmd }}
 else
     exec {{ .Cmd }}
 fi
