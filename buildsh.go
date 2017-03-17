@@ -362,6 +362,11 @@ if [ -n "$BUILDSH_USER" ]; then
         exit 1
     fi
 
+    if ! type sudo 2>/dev/null; then
+        echo "Buildsh requires 'sudo' but it is not in the container." 1>&2
+        exit 1
+    fi
+
     # Create buildbot user
     groupadd --non-unique --gid ${arr[1]} buildbot
     useradd --non-unique --uid ${arr[0]} --gid ${arr[1]} buildbot
