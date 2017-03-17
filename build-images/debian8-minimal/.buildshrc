@@ -1,2 +1,0 @@
-docker_image "kohkimakimoto/buildsh:debian8-minimal"
-
