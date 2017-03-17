@@ -362,7 +362,7 @@ if [ -n "$BUILDSH_USER" ]; then
         exit 1
     fi
 
-    if ! type sudo 2>/dev/null; then
+    if ! type sudo >/dev/null 2>&1; then
         echo "Buildsh requires 'sudo' but it is not in the container." 1>&2
         exit 1
     fi
