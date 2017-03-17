@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	Version    = "0.2.0"
+	Version    = "0.3.0"
 	CommitHash = "unknown"
 )
 
@@ -210,7 +210,12 @@ func makeEntryPointAndCmd(args []string, c *Config) (string, string, error) {
 	var entrypoint = "/bin/bash"
 	var cmd string
 
-	tmpl, err := template.New("base").Parse(realEntrypointTemplate)
+	funcMap := template.FuncMap{
+		"ShellEscape":  shellEscape,
+	}
+
+
+	tmpl, err := template.New("T").Funcs(funcMap).Parse(realEntrypointTemplate)
 	if err != nil {
 		return "", "", err
 	}
@@ -219,7 +224,7 @@ func makeEntryPointAndCmd(args []string, c *Config) (string, string, error) {
 	if len(args) > 0 {
 		mainCommand = strings.Join(args, " ")
 	} else {
-		mainCommand = "/bin/bash"
+		mainCommand = ""
 	}
 
 	dict := map[string]interface{}{
@@ -362,18 +367,24 @@ if [ -n "$BUILDSH_USER" ]; then
         exit 1
     fi
 
-    if ! type sudo >/dev/null 2>&1; then
-        echo "Buildsh requires 'sudo' but it is not in the container." 1>&2
-        exit 1
-    fi
-
     # Create buildbot user
     groupadd --non-unique --gid ${arr[1]} buildbot
     useradd --non-unique --uid ${arr[0]} --gid ${arr[1]} buildbot
-    echo 'buildbot	ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
-    exec sudo -u buildbot -E {{ .Cmd }}
+    if type sudo >/dev/null 2>&1; then
+        echo 'buildbot	ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+    fi
+
+    {{ if .Cmd }}
+    exec su buildbot -c {{ .Cmd | ShellEscape}}
+    {{ else }}
+    exec su buildbot
+    {{ end }}
 else
+    {{ if .Cmd }}
     exec {{ .Cmd }}
+    {{ else }}
+    exec /bin/bash
+    {{ end }}
 fi
 `
