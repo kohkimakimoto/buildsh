@@ -127,7 +127,5 @@ RUN sed -i -e 's/Defaults    env_reset/#Defaults    env_reset/' /etc/sudoers \
 RUN git clone https://github.com/vishnubob/wait-for-it.git /opt/wait-for-it \
   && ln -s /opt/wait-for-it/wait-for-it.sh /usr/bin/wait-for-it.sh
 
-COPY entrypoint.sh /entrypoint.sh
-
 WORKDIR /build
-ENTRYPOINT ["/entrypoint.sh"]
+CMD ["/bin/bash"]
