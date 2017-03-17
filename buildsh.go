@@ -118,9 +118,35 @@ Options:
 		}
 	}
 
+	// append options
 	var dockerOptions = config.DockerOptions
 	if flag.NArg() == 0 {
 		dockerOptions = dockerOptions + " -i -t"
+	}
+
+	// appned env
+	var envOptions = ""
+	if len(optEnv) > 0 {
+		for _, v := range optEnv {
+			envOptions = envOptions + " -e " + v
+		}
+	}
+
+	// cache config
+	var envForCache = ""
+	if config.UseCache {
+		var dir string
+		if !filepath.IsAbs(config.Cachedir) {
+			dir = filepath.Join(config.Home, config.Cachedir)
+		} else {
+			dir = config.Cachedir
+		}
+
+		if err := os.MkdirAll(dir, 0777); err != nil {
+			panic(err)
+		}
+
+		envForCache = "-e BUILDSH_USE_CACHE=1 -e BUILDSH_CACHEDIR=" + config.ContainerHome + "/.buildsh/cache"
 	}
 
 	entrypoint, cmd := makeEntryPointAndCmd(flag.Args(), config)
@@ -130,6 +156,8 @@ Options:
 		" -v " + config.Home + ":" + config.ContainerHome +
 		" " + dockerOptions +
 		" " + config.AdditionalDockerOptions +
+		" " + envForCache +
+		" " + envOptions +
 		` -e "BUILDSH=1"` +
 		` -e "BUILDSH_USER=$(id -u):$(id -g)"` +
 		` --entrypoint="` + entrypoint + `"` +
@@ -170,6 +198,7 @@ type Config struct {
 	ContainerWorkdir        string `yaml:"container_workdir"`
 	Cmd                     string `yaml:"cmd"`
 	UseCache                bool   `yaml:"use_cache"`
+	Cachedir                string `yaml:"cahcedir"`
 }
 
 func NewConfig() (*Config, error) {
@@ -188,6 +217,7 @@ func NewConfig() (*Config, error) {
 		ContainerWorkdir:        "/build",
 		Cmd:                     "",
 		UseCache:                false,
+		Cachedir:                ".buildsh/cache",
 	}
 
 	// Override default config by the environment variables.
