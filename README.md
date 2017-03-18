@@ -75,7 +75,7 @@ Description:
 
 * `docekr_image`: Specifies a docker image to run. Default `kohkimakimoto/buildsh:latest`.
 
-* `docker_options`: Options that are passed to the `docker run` command that is executed by bashsh internally. Default `--rm -e TZ=Asia/Tokyo`.
+* `docker_options`: Options that are passed to the `docker run` command that is executed by bashsh internally. Default `-i -t --rm -e TZ=Asia/Tokyo`.
 
 * `additional_docker_options`: Options that are appended to the `docker_options`.
 

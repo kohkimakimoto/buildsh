@@ -138,12 +138,6 @@ See also:
 		config.ContainerWorkdir = config.HomeInContainer
 	}
 
-	// append options
-	var dockerOptions = config.DockerOptions
-	if flag.NArg() == 0 {
-		dockerOptions = dockerOptions + " -i -t"
-	}
-
 	// appned env
 	var envOptions = ""
 	if len(config.Environment) > 0 {
@@ -183,7 +177,7 @@ See also:
 	// construct docker run command.
 	cmdline := "docker run -w " + config.ContainerWorkdir +
 		" -v " + config.Home + ":" + config.ContainerHome +
-		" " + dockerOptions +
+		" " + config.DockerOptions +
 		" " + config.AdditionalDockerOptions +
 		" " + envForCache +
 		" " + envOptions +
@@ -261,7 +255,7 @@ func NewConfig() (*Config, error) {
 
 	c := &Config{
 		DockerImage:             "kohkimakimoto/buildsh:latest",
-		DockerOptions:           "--rm -e TZ=Asia/Tokyo",
+		DockerOptions:           "-i -t --rm -e TZ=Asia/Tokyo",
 		AdditionalDockerOptions: "",
 		Home:             wd,
 		Environment:      map[string]string{},
