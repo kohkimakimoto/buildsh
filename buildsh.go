@@ -84,6 +84,7 @@ Description:
 See also:
     https://github.com/kohkimakimoto/buildsh
 `)
+		os.Exit(0)
 	}
 	flag.Parse()
 
