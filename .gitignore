@@ -9,7 +9,6 @@ Thumbs.db
 cache/
 /dist
 /buildsh
-/vendor
 /.buildsh.yml
 
 !.gitkeep
