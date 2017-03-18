@@ -62,7 +62,7 @@ Example:
 ```yaml
 use_cache: true
 docker_image: kohkimakimoto/buildsh:latest
-docker_options: --net=host -v=/var/run/docker.sock:/var/run/docker.sock
+additional_docker_options: --net=host -v=/var/run/docker.sock:/var/run/docker.sock
 environment:
   FOO: bar
   FOO2: bar2
@@ -75,9 +75,9 @@ Description:
 
 * `docekr_image`: Specifies a docker image to run. Default `kohkimakimoto/buildsh:latest`.
 
-* `docker_options`: Options that are passed to the `docker run` that is executed by bashsh internally.
+* `docker_options`: Options that are passed to the `docker run` command that is executed by bashsh internally. Default `--rm -e TZ=Asia/Tokyo`.
 
-* `additional_docker_options`: Options that are appended to the `docker run` that is executed by bashsh internally.
+* `additional_docker_options`: Options that are appended to the `docker_options`.
 
 * `environment`: Specifies environment variables in a container. 
 
@@ -116,9 +116,6 @@ $ chmod 755 your_script.sh
 $ ./your_script.sh
 I'm in a container!
 ```
-
-
-
 
 ## Author
 
