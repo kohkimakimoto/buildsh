@@ -53,6 +53,8 @@ $ buildsh php phpunit
 
 ## Configuration
 
+### .buildsh.yml
+
 Buildsh loads configuration from `.buildsh.yml` in your current working directory. 
 
 Example:
@@ -61,7 +63,7 @@ Example:
 use_cache: true
 docker_image: kohkimakimoto/buildsh:latest
 docker_options: --net=host -v=/var/run/docker.sock:/var/run/docker.sock
-enviroment:
+environment:
   FOO: bar
   FOO2: bar2
 home_in_container: /build/src/github.com/kohkimakimoto/buildsh
@@ -73,11 +75,27 @@ Description:
 
 * `docekr_image`: Specifies a docker image to run. Default `kohkimakimoto/buildsh:latest`.
 
-* `docker_options`: Options that are appended to the `docker run` that is executed by bashsh internally.
+* `docker_options`: Options that are passed to the `docker run` that is executed by bashsh internally.
 
-* `environment`: Specifies a environment variable in a container. 
+* `additional_docker_options`: Options that are appended to the `docker run` that is executed by bashsh internally.
+
+* `environment`: Specifies environment variables in a container. 
 
 * `home_in_container`: Changes mount point and current working directory in a container. Default `/build`.
+
+### Environment Variables
+
+You can also change default configuration by using environment variable.
+
+* `BUILDSH_USE_CACHE`: Default value of `use_cache`.
+
+* `BUILDSH_DOCKER_IMAGE`: Default value of `docekr_image`.
+
+* `BUILDSH_DOCKER_OPTIONS`: Default value of `docker_options`.
+
+* `BUILDSH_ADDITIONAL_DOCKER_OPTIONS`: Default value of `additional_docker_options`.
+
+* `BUILDSH_HOME_IN_CONTAINER`: Default value of `home_in_container`.
 
 ## Using With Shebang
 

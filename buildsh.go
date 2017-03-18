@@ -4,9 +4,6 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"github.com/Songmu/wrapcommander"
-	"github.com/pkg/errors"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -14,10 +11,14 @@ import (
 	"runtime"
 	"strings"
 	"text/template"
+
+	"github.com/Songmu/wrapcommander"
+	"github.com/pkg/errors"
+	"gopkg.in/yaml.v2"
 )
 
 var (
-	Version    = "0.3.0"
+	Version    = "0.4.0"
 	CommitHash = "unknown"
 )
 
@@ -98,13 +99,9 @@ See also:
 		panic(err)
 	}
 
-	if optConfig != "" {
-		config.ConfigFile = optConfig
-	}
-
 	// override config by the config file.
-	if config.ConfigFile != "" {
-		p, err := filepath.Abs(config.ConfigFile)
+	if optConfig != "" {
+		p, err := filepath.Abs(optConfig)
 		if err != nil {
 			panic(err)
 		}
@@ -244,7 +241,6 @@ func makeEntryPointAndCmd(args []string, c *Config) (string, string, error) {
 }
 
 type Config struct {
-	ConfigFile              string            `yaml:"-"`
 	DockerImage             string            `yaml:"docker_image"`
 	DockerOptions           string            `yaml:"docker_options"`
 	AdditionalDockerOptions string            `yaml:"additional_docker_options"`
@@ -264,7 +260,6 @@ func NewConfig() (*Config, error) {
 	}
 
 	c := &Config{
-		ConfigFile:              "",
 		DockerImage:             "kohkimakimoto/buildsh:latest",
 		DockerOptions:           "--rm -e TZ=Asia/Tokyo",
 		AdditionalDockerOptions: "",
@@ -287,9 +282,6 @@ func NewConfig() (*Config, error) {
 	if d := os.Getenv("BUILDSH_ADDITIONAL_DOCKER_OPTIONS"); d != "" {
 		c.AdditionalDockerOptions = d
 	}
-	if d := os.Getenv("BUILDSH_CONFIG"); d != "" {
-		c.ConfigFile = d
-	}
 	if d := os.Getenv("BUILDSH_HOME"); d != "" {
 		c.Home = d
 	}
@@ -298,6 +290,9 @@ func NewConfig() (*Config, error) {
 	}
 	if d := os.Getenv("BUILDSH_CONTAINER_WORKDIR"); d != "" {
 		c.ContainerWorkdir = d
+	}
+	if d := os.Getenv("BUILDSH_HOME_IN_CONTAINER"); d != "" {
+		c.HomeInContainer = d
 	}
 	if d := os.Getenv("BUILDSH_USE_CACHE"); d != "" {
 		c.UseCache = true
