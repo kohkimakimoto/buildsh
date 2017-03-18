@@ -11,7 +11,5 @@ RUN sed -i -e 's/Defaults[ 	]env_reset/#Defaults    env_reset/' /etc/sudoers \
     && sed -i -e 's/Defaults[ 	]secure_path/#Defaults    secure_path/' /etc/sudoers \		
     && echo 'Defaults    env_keep += "PATH"' >> /etc/sudoers		
 		
-COPY entrypoint.sh /entrypoint.sh		
-		
 WORKDIR /build
 CMD ["/bin/bash"]
