@@ -1,7 +1,6 @@
 # Buildsh
 
-Buildsh is docker powered shell that makes it easy to run isolated environment for building, testing and deploying softwares.
-Internally, buildsh is a wrapper of `docker run` command that is implemented in GO.
+Buildsh is docker powered shell that makes it easy to run a script in isolated environment for building, testing and deploying softwares. Internally, buildsh is a wrapper of `docker run` command that is implemented in GO.
 
 ## Requirements
 
@@ -108,7 +107,7 @@ You can also change default configuration by using environment variable.
 If you want to create a script file that are executed by buildsh, you can use a trick to interpret shebang with buildsh. See the following example code.
 
 ```sh
-#!/bin/sh
+#!/usr/bin/env bash
 [ -z "$BUILDSH" ] && exec buildsh "$0" "$@"
 
 # your code is after here...

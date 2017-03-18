@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	Version    = "0.4.0"
+	Version    = "0.5.0"
 	CommitHash = "unknown"
 )
 
@@ -54,10 +54,10 @@ func realMain() (status int) {
 	flag.Var(&optEnv, "env", "")
 
 	flag.Usage = func() {
-		fmt.Println(`Usage: buildsh [<options...>] -- [<commands...>]
+		fmt.Println(`Usage: buildsh [<options...>] [<commands...>|<script_file>]
 
-Buildsh is docker powered shell that make it easy to run isolated
-environment for building, testing and deploying softwares.
+Buildsh is docker powered shell that makes it easy to run a script
+in isolated environment for building, testing and deploying softwares.
 
 The MIT License (MIT)
 Kohki Makimoto <kohki.makimoto@gmail.com>
@@ -75,7 +75,8 @@ Options:
 
 Examples:
     buildsh
-    buildsh -- ls -la
+    buildsh ls
+    buildsh testing.sh
 
 Configuration:
     Buildsh loads .buildsh.yml file if it is existed in your current directory.
@@ -83,7 +84,7 @@ Configuration:
 Description:
     Buildsh runs an arbitrary command in the isolated container.
     If you run buildsh without any options,
-    It boots the container with interactive shell (default bash).
+    It boots the container with interactive shell.
 
 See also:
     https://github.com/kohkimakimoto/buildsh
@@ -207,7 +208,7 @@ See also:
 }
 
 func makeEntryPointAndCmd(args []string, c *Config) (string, string, error) {
-	var entrypoint = "/bin/bash"
+	var entrypoint = c.Shell
 	var cmd string
 
 	funcMap := template.FuncMap{
@@ -228,6 +229,7 @@ func makeEntryPointAndCmd(args []string, c *Config) (string, string, error) {
 
 	dict := map[string]interface{}{
 		"Cmd": mainCommand,
+		"Config": c,
 	}
 
 	var b bytes.Buffer
@@ -253,6 +255,7 @@ type Config struct {
 	HomeInContainer         string            `yaml:"home_in_container"`
 	UseCache                bool              `yaml:"use_cache"`
 	Cachedir                string            `yaml:"cahcedir"`
+	Shell                   string            `yaml:"shell"`
 }
 
 func NewConfig() (*Config, error) {
@@ -272,6 +275,7 @@ func NewConfig() (*Config, error) {
 		HomeInContainer:  "",
 		UseCache:         false,
 		Cachedir:         ".buildsh/cache",
+		Shell:            "/bin/bash",
 	}
 
 	// Override default config by the environment variables.
@@ -305,14 +309,10 @@ func NewConfig() (*Config, error) {
 
 type stringSlice []string
 
-// Now, for our new type, implement the two methods of
-// the flag.Value interface...
-// The first method is String() string
 func (s *stringSlice) String() string {
 	return fmt.Sprintf("%s", *s)
 }
 
-// The second method is Set(value string) error
 func (s *stringSlice) Set(value string) error {
 	*s = append(*s, value)
 	return nil
@@ -331,6 +331,7 @@ func spawn(command string) error {
 		shell = "bash"
 		flag = "-c"
 	}
+
 	cmd := exec.Command(shell, flag, command)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
@@ -382,7 +383,7 @@ else
     {{ if .Cmd }}
     exec {{ .Cmd }}
     {{ else }}
-    exec /bin/bash
+    exec {{ .Config.Shell }}
     {{ end }}
 fi
 `
