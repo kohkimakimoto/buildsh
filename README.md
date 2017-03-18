@@ -11,7 +11,13 @@ Internally, buildsh is a wrapper of `docker run` command that is implemented in 
 
 [Download latest version](https://github.com/kohkimakimoto/buildsh/releases/latest)
 
-Run `buildsh -h` to check working.
+Or use `go get` command. 
+
+```
+$ go get github.com/kohkimakimoto/buildsh
+```
+
+After installing buildsh, run `buildsh -h` to check working.
 
 ```
 $ buildsh -h

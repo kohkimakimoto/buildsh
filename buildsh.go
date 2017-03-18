@@ -15,6 +15,7 @@ import (
 	"github.com/Songmu/wrapcommander"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
+	"strconv"
 )
 
 var (
@@ -169,6 +170,9 @@ See also:
 		envForCache = "-e BUILDSH_USE_CACHE=1 -e BUILDSH_CACHEDIR=" + config.ContainerHome + "/.buildsh/cache"
 	}
 
+	uid := os.Getuid()
+	gid := os.Getgid()
+
 	entrypoint, cmd, err := makeEntryPointAndCmd(flag.Args(), config)
 	if err != nil {
 		panic(err)
@@ -182,13 +186,13 @@ See also:
 		" " + envForCache +
 		" " + envOptions +
 		` -e BUILDSH=1` +
-		` -e BUILDSH_USER=$(id -u):$(id -g)` +
+		` -e BUILDSH_USER=` + strconv.Itoa(uid) + `:` + strconv.Itoa(gid) +
 		` --entrypoint="` + entrypoint + `"` +
 		" " + config.DockerImage +
 		" " + cmd
 
 	if optDebug {
-		fmt.Println("[debug] " + cmdline)
+		fmt.Println("[buildsh debug] " + cmdline)
 	}
 
 	if err := spawn(cmdline); err != nil {
@@ -331,6 +335,7 @@ func spawn(command string) error {
 	if err != nil {
 		return err
 	}
+
 	return cmd.Wait()
 }
 
