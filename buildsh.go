@@ -36,7 +36,7 @@ func realMain() (status int) {
 	}()
 
 	// parse flags...
-	var optVersion, optDebug, optClean bool
+	var optVersion, optDebug, optClean, optNoConfig bool
 	var optConfig string
 	var optEnv stringSlice
 
@@ -45,6 +45,7 @@ func realMain() (status int) {
 	flag.BoolVar(&optDebug, "d", false, "")
 	flag.BoolVar(&optDebug, "debug", false, "")
 	flag.BoolVar(&optClean, "clean", false, "")
+	flag.BoolVar(&optNoConfig, "no-config", false, "")
 
 	flag.StringVar(&optConfig, "config", "", "")
 	flag.StringVar(&optConfig, "c", "", "")
@@ -67,6 +68,7 @@ Options:
     -e, --env <KEY=VALUE>      Set custom environment variables.
     -d, --debug                Use debug mode.
     -c, --config <FILE>        Load configuration from the FILE instead of .buildsh.yml
+    --no-config                Does not use configuration file even if .buildsh.ymy is existed.
     --clean                    Remove cache.
     -h, --help                 Show help.
     -v, --version              Print the version
@@ -79,9 +81,9 @@ Configuration:
     Buildsh loads .buildsh.yml file if it is existed in your current directory.
 
 Description:
-    Run an arbitrary command in the isolated container.
-    If you run a command without any options,
-    buildsh boots the container with interactive shell (default bash).
+    Buildsh runs an arbitrary command in the isolated container.
+    If you run buildsh without any options,
+    It boots the container with interactive shell (default bash).
 
 See also:
     https://github.com/kohkimakimoto/buildsh
@@ -100,29 +102,14 @@ See also:
 		panic(err)
 	}
 
-	// override config by the config file.
-	if optConfig != "" {
-		p, err := filepath.Abs(optConfig)
-		if err != nil {
-			panic(err)
-		}
+	if !optNoConfig {
+		// override config by the config file.
+		if optConfig != "" {
+			p, err := filepath.Abs(optConfig)
+			if err != nil {
+				panic(err)
+			}
 
-		b, err := ioutil.ReadFile(p)
-		if err != nil {
-			panic(err)
-		}
-
-		if err := yaml.Unmarshal(b, config); err != nil {
-			panic(err)
-		}
-	} else {
-		wd, err := os.Getwd()
-		if err != nil {
-			panic(errors.Wrap(err, "failed to get working directory."))
-		}
-
-		p := filepath.Join(wd, ".buildsh.yml")
-		if _, err := os.Stat(p); err == nil {
 			b, err := ioutil.ReadFile(p)
 			if err != nil {
 				panic(err)
@@ -130,6 +117,23 @@ See also:
 
 			if err := yaml.Unmarshal(b, config); err != nil {
 				panic(err)
+			}
+		} else {
+			wd, err := os.Getwd()
+			if err != nil {
+				panic(errors.Wrap(err, "failed to get working directory."))
+			}
+
+			p := filepath.Join(wd, ".buildsh.yml")
+			if _, err := os.Stat(p); err == nil {
+				b, err := ioutil.ReadFile(p)
+				if err != nil {
+					panic(err)
+				}
+
+				if err := yaml.Unmarshal(b, config); err != nil {
+					panic(err)
+				}
 			}
 		}
 	}
@@ -192,7 +196,7 @@ See also:
 		" " + cmd
 
 	if optDebug {
-		fmt.Println("[buildsh debug] " + cmdline)
+		fmt.Println("buildsh debug: " + cmdline)
 	}
 
 	if err := spawn(cmdline); err != nil {
