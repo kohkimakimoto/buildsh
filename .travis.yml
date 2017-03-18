@@ -1,6 +1,11 @@
 services:
     - docker
 
+language: go
+
+go:
+  - 1.8
+
 script:
   - make dev
   - ./buildsh -h
