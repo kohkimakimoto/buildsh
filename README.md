@@ -129,7 +129,7 @@ $ ./your_script.sh
 I'm in a container!
 ```
 
-### Using With Travis CI
+### Using In Travis CI
 
 If you use buildsh in Travis CI. See the below `.travis.yml` example:
 
