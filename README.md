@@ -44,6 +44,9 @@ $ php phpunit
 
 # go
 $ go test ./...
+
+# shell script
+$ bash ./tests.sh
 ```
 
 When you exit the shell, the container will be removed automatically.
@@ -104,7 +107,9 @@ You can also change default configuration by using environment variable.
 
 * `BUILDSH_HOME_IN_CONTAINER`: Default value of `home_in_container`.
 
-## Using With Shebang
+## Tips
+
+### Using With Shebang
 
 If you want to create a script file that are executed by buildsh, you can use a trick to interpret shebang with buildsh. See the following example code.
 
@@ -122,6 +127,21 @@ You can run it directly after adding an execution permission.
 $ chmod 755 your_script.sh
 $ ./your_script.sh
 I'm in a container!
+```
+
+### Using With Travis CI
+
+```yaml
+language: go
+
+go:
+  - 1.8
+
+before_install:
+  - go get github.com/kohkimakimoto/buildsh
+
+script:
+  - ./examples/shebang.sh
 ```
 
 ## Author
