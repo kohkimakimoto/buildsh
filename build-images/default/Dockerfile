@@ -109,6 +109,14 @@ RUN rbenv install ${RUBY_VERSION} && rbenv global ${RUBY_VERSION} && rbenv rehas
 # bundler
 RUN gem install bundler
 
+# Perl
+ENV PERL_VERSION 5.25.10
+RUN git clone https://github.com/tokuhirom/plenv.git /opt/plenv \
+  && git clone https://github.com/tokuhirom/Perl-Build.git /opt/plenv/plugins/perl-build
+ENV PLENV_ROOT /opt/plenv
+ENV PATH $PLENV_ROOT/shims:$PLENV_ROOT/bin:$PATH
+RUN plenv install ${PERL_VERSION} && plenv global ${PERL_VERSION} && plenv rehash
+
 # Go
 ENV GOVERSION 1.8
 ADD https://storage.googleapis.com/golang/go${GOVERSION}.linux-amd64.tar.gz /tmp/go${GOVERSION}.linux-amd64.tar.gz
@@ -118,9 +126,9 @@ ENV GOPATH /build
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
 # sudo config
-RUN sed -i -e 's/Defaults    env_reset/#Defaults    env_reset/' /etc/sudoers \
-    && sed -i -e 's/Defaults    secure_path/#Defaults    secure_path/' /etc/sudoers \
-    && echo 'Defaults    env_keep += "PATH"' >> /etc/sudoers
+RUN sed -i -e 's/Defaults[ 	]env_reset/#Defaults    env_reset/' /etc/sudoers \		
+    && sed -i -e 's/Defaults[ 	]secure_path/#Defaults    secure_path/' /etc/sudoers \		
+    && echo 'Defaults    env_keep += "PATH"' >> /etc/sudoers		
 
 # misc
 # wait-for-it
