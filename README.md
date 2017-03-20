@@ -131,7 +131,12 @@ I'm in a container!
 
 ### Using With Travis CI
 
+If you use buildsh in Travis CI. See the below `.travis.yml` example:
+
 ```yaml
+services:
+    - docker
+
 language: go
 
 go:
@@ -141,7 +146,7 @@ before_install:
   - go get github.com/kohkimakimoto/buildsh
 
 script:
-  - ./examples/shebang.sh
+  - buildsh ./your/script.sh
 ```
 
 ## Author

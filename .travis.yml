@@ -1,13 +1,3 @@
-# services:
-#     - docker
-
-# language: go
-
-# go:
-#   - 1.8
-
-# script:
-#   - make dev
 services:
     - docker
 
@@ -16,8 +6,5 @@ language: go
 go:
   - 1.8
 
-before_install:
-  - go get github.com/kohkimakimoto/buildsh
-
 script:
-  - ./examples/shebang.sh
+  - make dev
