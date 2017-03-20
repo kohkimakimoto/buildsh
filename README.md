@@ -1,5 +1,7 @@
 # Buildsh
 
+[![Build Status](https://travis-ci.org/kohkimakimoto/buildsh.svg?branch=master)](https://travis-ci.org/kohkimakimoto/buildsh)
+
 Buildsh is docker powered shell that makes it easy to run a script in isolated environment for building, testing and deploying softwares. Internally, buildsh is a wrapper of `docker run` command that is implemented in GO.
 
 ## Requirements
