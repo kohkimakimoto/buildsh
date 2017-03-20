@@ -8,6 +8,8 @@
 
 # script:
 #   - make dev
+services:
+    - docker
 
 language: go
 
