@@ -4,18 +4,17 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"github.com/Songmu/wrapcommander"
+	"github.com/pkg/errors"
+	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"text/template"
-
-	"github.com/Songmu/wrapcommander"
-	"github.com/pkg/errors"
-	"gopkg.in/yaml.v2"
-	"strconv"
 )
 
 var (
@@ -101,6 +100,11 @@ See also:
 	config, err := NewConfig()
 	if err != nil {
 		panic(err)
+	}
+
+	if flag.NArg() == 0 {
+		// append flags to take an interactive shell
+		config.DockerOptions = config.DockerOptions + " -i -t"
 	}
 
 	if !optNoConfig {
@@ -228,7 +232,7 @@ func makeEntryPointAndCmd(args []string, c *Config) (string, string, error) {
 	}
 
 	dict := map[string]interface{}{
-		"Cmd": mainCommand,
+		"Cmd":    mainCommand,
 		"Config": c,
 	}
 
@@ -266,7 +270,7 @@ func NewConfig() (*Config, error) {
 
 	c := &Config{
 		DockerImage:             "kohkimakimoto/buildsh:latest",
-		DockerOptions:           "-i -t --rm -e TZ=Asia/Tokyo",
+		DockerOptions:           "--rm -e TZ=Asia/Tokyo",
 		AdditionalDockerOptions: "",
 		Home:             wd,
 		Environment:      map[string]string{},
