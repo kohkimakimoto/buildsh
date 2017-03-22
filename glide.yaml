@@ -1,6 +1,5 @@
 package: github.com/kohkimakimoto/buildsh
 import:
-- package: github.com/mattn/go-isatty
 - package: github.com/Songmu/wrapcommander
 - package: github.com/pkg/errors
 - package: gopkg.in/yaml.v2

@@ -1,16 +1,10 @@
-hash: 4f776ed352cff0281060b749d9b3681085a52bece0819b5b97ffa78161601708
-updated: 2017-03-22T16:54:41.979659941+09:00
+hash: 2b1c57f840566ebac06c58183cdc4d2aa658368242030208316d1df46c4d30b2
+updated: 2017-03-22T17:21:43.582759216+09:00
 imports:
-- name: github.com/mattn/go-isatty
-  version: 57fdcb988a5c543893cc61bce354a6e24ab70022
 - name: github.com/pkg/errors
   version: ff09b135c25aae272398c51a07235b90a75aa4f0
 - name: github.com/Songmu/wrapcommander
   version: 4888652de0bfef31e500e8f4e0831e8ae9ecaa85
-- name: golang.org/x/sys
-  version: 99f16d856c9836c42d24e7ab64ea72916925fa97
-  subpackages:
-  - unix
 - name: gopkg.in/yaml.v2
   version: a3f3340b5840cee44f372bddb5880fcbc419b46a
 testImports: []
