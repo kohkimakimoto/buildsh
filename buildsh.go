@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"github.com/mattn/go-isatty"
 	"github.com/Songmu/wrapcommander"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
@@ -102,8 +103,7 @@ See also:
 		panic(err)
 	}
 
-	if flag.NArg() == 0 {
-		// append flags to take an interactive shell
+	if isatty.IsTerminal(os.Stdout.Fd()) {
 		config.DockerOptions = config.DockerOptions + " -i -t"
 	}
 
