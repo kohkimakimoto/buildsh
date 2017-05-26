@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/kohkimakimoto/buildsh.svg?branch=master)](https://travis-ci.org/kohkimakimoto/buildsh)
 
-Buildsh is docker powered shell that makes it easy to run a script in isolated environment for building, testing and deploying softwares. Internally, buildsh is a wrapper of `docker run` command that is implemented in GO.
+Buildsh is docker powered shell that makes it easy to run a script in isolated environment for building, testing and deploying softwares. Internally, buildsh is a wrapper of `docker run` command that is implemented in Go.
 
 ## Requirements
 
@@ -34,7 +34,7 @@ Try to run `buildsh` without any options.
 $ buildsh
 ```
 
-Buildsh boots a docker container using the default image `kohkimakimoto/buildsh:latest`, and starts bash process with interactive mode.
+Buildsh boots a docker container using the default image `kohkimakimoto/buildsh:latest`, and starts a bash process with interactive mode.
 Your current working direcotory is automatically mounted to `/build` directory in the container, and several programming language runtimes (Go, Ruby, PHP, etc...) already be installed in the container. 
 So you can run your project's tests by the following commands.
 
@@ -66,6 +66,7 @@ $ buildsh php phpunit
 ### .buildsh.yml
 
 Buildsh loads configuration from `.buildsh.yml` in your current working directory. 
+You can also specify the configuration file by using `-c` CLI option.
 
 Example:
 
@@ -77,6 +78,13 @@ environment:
   FOO: bar
   FOO2: bar2
 home_in_container: /build/src/github.com/kohkimakimoto/buildsh
+script: |
+  # 'buildbot' is a defaut user in the container for the buildsh.
+  chown buildbot \
+    /build \
+    /build/src/ \
+    /build/src/github.com/ \
+    /build/src/github.com/kohkimakimoto
 ```
 
 Description:
@@ -92,6 +100,8 @@ Description:
 * `environment`: Specifies environment variables in a container. 
 
 * `home_in_container`: Changes mount point and current working directory in a container. Default `/build`.
+
+* `script`: Runs arbitrary script in a container before starting the shell. This script executed by root user. So you can use it to customize the container environment.
 
 ### Environment Variables
 

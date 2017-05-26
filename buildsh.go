@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	Version    = "0.7.0"
+	Version    = "0.8.0"
 	CommitHash = "unknown"
 )
 
@@ -68,7 +68,7 @@ Options:
     -e, --env <KEY=VALUE>      Set custom environment variables.
     -d, --debug                Use debug mode.
     -c, --config <FILE>        Load configuration from the FILE instead of .buildsh.yml
-    --no-config                Does not use configuration file even if .buildsh.ymy is existed.
+    --no-config                Does not use configuration file even if .buildsh.yml is existed.
     --clean                    Remove cache.
     -h, --help                 Show help.
     -v, --version              Print the version
@@ -260,6 +260,7 @@ type Config struct {
 	UseCache                bool              `yaml:"use_cache"`
 	Cachedir                string            `yaml:"cahcedir"`
 	Shell                   string            `yaml:"shell"`
+	Script                  string            `yaml:"script"`
 }
 
 func NewConfig() (*Config, error) {
@@ -378,12 +379,18 @@ if [ -n "$BUILDSH_USER" ]; then
         echo 'buildbot	ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
     fi
 
+	# Execute the script
+	{{ .Config.Script }}
+
     {{ if .Cmd }}
     exec su buildbot -c {{ .Cmd | ShellEscape}}
     {{ else }}
     exec su buildbot
     {{ end }}
 else
+	# Execute the script
+	{{ .Config.Script }}
+
     {{ if .Cmd }}
     exec {{ .Cmd }}
     {{ else }}
