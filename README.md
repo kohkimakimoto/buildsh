@@ -66,6 +66,7 @@ $ buildsh php phpunit
 ### .buildsh.yml
 
 Buildsh loads configuration from `.buildsh.yml` in your current working directory. 
+You can also specify the configuration file by using `-c` CLI option.
 
 Example:
 
