@@ -68,7 +68,7 @@ Options:
     -e, --env <KEY=VALUE>      Set custom environment variables.
     -d, --debug                Use debug mode.
     -c, --config <FILE>        Load configuration from the FILE instead of .buildsh.yml
-    --no-config                Does not use configuration file even if .buildsh.ymy is existed.
+    --no-config                Does not use configuration file even if .buildsh.yml is existed.
     --clean                    Remove cache.
     -h, --help                 Show help.
     -v, --version              Print the version
