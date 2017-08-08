@@ -69,14 +69,14 @@ RUN yum -y install \
   && chmod -R 777 "/build"
 
 # Python
-ENV PYTHON_VERSION 3.6.0
+ENV PYTHON_VERSION 3.6.2
 RUN git clone https://github.com/yyuu/pyenv.git /opt/pyenv
 ENV PYENV_ROOT /opt/pyenv
 ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
 RUN pyenv install ${PYTHON_VERSION} && pyenv global ${PYTHON_VERSION} && pyenv rehash
 
 # Node.js
-ENV NODE_VERSION v6.9.5
+ENV NODE_VERSION v8.2.1
 RUN git clone https://github.com/riywo/ndenv /opt/ndenv \
   && git clone https://github.com/riywo/node-build.git /opt/ndenv/plugins/node-build
 ENV NDENV_ROOT /opt/ndenv
@@ -90,7 +90,7 @@ RUN cd /opt \
 ENV PATH /opt/yarn/bin:$PATH
 
 # PHP
-ENV PHP_VERSION 7.1.2
+ENV PHP_VERSION 7.1.8
 RUN git clone https://github.com/madumlao/phpenv.git /opt/phpenv \
  && git clone https://github.com/php-build/php-build.git /opt/phpenv/plugins/php-build
 ENV PHPENV_ROOT /opt/phpenv
@@ -100,7 +100,7 @@ RUN phpenv install ${PHP_VERSION} && phpenv global ${PHP_VERSION} && phpenv reha
 RUN curl -L https://getcomposer.org/composer.phar -o /usr/bin/composer && chmod 755 /usr/bin/composer
 
 # Ruby
-ENV RUBY_VERSION 2.3.3
+ENV RUBY_VERSION 2.3.4
 RUN git clone https://github.com/rbenv/rbenv.git /opt/rbenv \
  && git clone https://github.com/rbenv/ruby-build.git /opt/rbenv/plugins/ruby-build
 ENV RBENV_ROOT /opt/rbenv
@@ -118,7 +118,7 @@ ENV PATH $PLENV_ROOT/shims:$PLENV_ROOT/bin:$PATH
 RUN plenv install ${PERL_VERSION} && plenv global ${PERL_VERSION} && plenv rehash
 
 # Go
-ENV GOVERSION 1.8
+ENV GOVERSION 1.8.3
 ADD https://storage.googleapis.com/golang/go${GOVERSION}.linux-amd64.tar.gz /tmp/go${GOVERSION}.linux-amd64.tar.gz
 RUN tar -C /usr/local -xzf /tmp/go${GOVERSION}.linux-amd64.tar.gz \
   && rm /tmp/go${GOVERSION}.linux-amd64.tar.gz

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 [ -z "$BUILDSH" ] && exec buildsh "$0" "$@"
 
 # your code is after here...
