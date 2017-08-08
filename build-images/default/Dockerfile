@@ -39,6 +39,7 @@ RUN yum -y install \
   sqlite-devel  \
   libxml2 \
   libxml2-devel \
+  libicu-devel \
   libcurl \
   libcurl-devel \
   libjpeg \
@@ -90,7 +91,7 @@ RUN cd /opt \
 ENV PATH /opt/yarn/bin:$PATH
 
 # PHP
-ENV PHP_VERSION 7.1.2
+ENV PHP_VERSION 7.1.8
 RUN git clone https://github.com/madumlao/phpenv.git /opt/phpenv \
  && git clone https://github.com/php-build/php-build.git /opt/phpenv/plugins/php-build
 ENV PHPENV_ROOT /opt/phpenv
