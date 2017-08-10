@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	Version    = "0.8.0"
+	Version    = "0.9.0"
 	CommitHash = "unknown"
 )
 
@@ -36,7 +36,7 @@ func realMain() (status int) {
 	}()
 
 	// parse flags...
-	var optVersion, optDebug, optClean, optNoConfig bool
+	var optVersion, optDebug, optClean, optNoConfig, optCommandString bool
 	var optConfig string
 	var optEnv stringSlice
 
@@ -46,15 +46,15 @@ func realMain() (status int) {
 	flag.BoolVar(&optDebug, "debug", false, "")
 	flag.BoolVar(&optClean, "clean", false, "")
 	flag.BoolVar(&optNoConfig, "no-config", false, "")
+	flag.BoolVar(&optCommandString, "c", false, "")
 
 	flag.StringVar(&optConfig, "config", "", "")
-	flag.StringVar(&optConfig, "c", "", "")
 
 	flag.Var(&optEnv, "e", "")
 	flag.Var(&optEnv, "env", "")
 
 	flag.Usage = func() {
-		fmt.Println(`Usage: buildsh [<options...>] [<commands...>|<script_file>]
+		fmt.Println(`Usage: buildsh [<options...>] [<commands...>]
 
 Buildsh is docker powered shell that makes it easy to run a script
 in isolated environment for building, testing and deploying softwares.
@@ -65,9 +65,10 @@ Kohki Makimoto <kohki.makimoto@gmail.com>
 version ` + Version + ` (` + CommitHash + `)
 
 Options:
+    -c                         Run the commands that are read from the first non-option argument.
     -e, --env <KEY=VALUE>      Set custom environment variables.
     -d, --debug                Use debug mode.
-    -c, --config <FILE>        Load configuration from the FILE instead of .buildsh.yml
+    --config <FILE>            Load configuration from the FILE instead of .buildsh.yml
     --no-config                Does not use configuration file even if .buildsh.yml is existed.
     --clean                    Remove cache.
     -h, --help                 Show help.
@@ -75,7 +76,7 @@ Options:
 
 Examples:
     buildsh
-    buildsh ls
+    buildsh -c ls
     buildsh testing.sh
 
 Configuration:
@@ -182,9 +183,12 @@ See also:
 	uid := os.Getuid()
 	gid := os.Getgid()
 
-	entrypoint, cmd, err := makeEntryPointAndCmd(flag.Args(), config)
+	cmd, err := makeCmd(flag.Args(), config, optCommandString)
 	if err != nil {
 		panic(err)
+	}
+	if optCommandString {
+		cmd = " -c " + cmd
 	}
 
 	// construct docker run command.
@@ -196,7 +200,7 @@ See also:
 		" " + envOptions +
 		` -e BUILDSH=1` +
 		` -e BUILDSH_USER=` + strconv.Itoa(uid) + `:` + strconv.Itoa(gid) +
-		` --entrypoint="` + entrypoint + `"` +
+		` --entrypoint="` + config.Shell + `"` +
 		" " + config.DockerImage +
 		" " + cmd
 
@@ -211,22 +215,23 @@ See also:
 	return status
 }
 
-func makeEntryPointAndCmd(args []string, c *Config) (string, string, error) {
-	var entrypoint = c.Shell
-	var cmd string
-
+func makeCmd(args []string, c *Config, optCommandString bool) (string, error) {
 	funcMap := template.FuncMap{
 		"ShellEscape": shellEscape,
 	}
 
 	tmpl, err := template.New("T").Funcs(funcMap).Parse(realEntrypointTemplate)
 	if err != nil {
-		return "", "", err
+		return "", err
 	}
 
 	var mainCommand string
 	if len(args) > 0 {
-		mainCommand = strings.Join(args, " ")
+		if optCommandString {
+			mainCommand = args[0]
+		} else {
+			mainCommand = c.Shell + " " + strings.Join(args, " ")
+		}
 	} else {
 		mainCommand = ""
 	}
@@ -239,13 +244,13 @@ func makeEntryPointAndCmd(args []string, c *Config) (string, string, error) {
 	var b bytes.Buffer
 	err = tmpl.Execute(&b, dict)
 	if err != nil {
-		return "", "", err
+		return "", err
 	}
 
 	realEntrypoint := shellEscape(b.String())
-	cmd = " -c " + realEntrypoint
+	cmd := " -c " + realEntrypoint
 
-	return entrypoint, cmd, nil
+	return cmd, nil
 }
 
 type Config struct {

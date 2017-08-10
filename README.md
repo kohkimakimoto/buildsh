@@ -55,10 +55,10 @@ When you exit the shell, the container will be removed automatically.
 $ exit
 ```
 
-If you use buildsh in non interactive mode, you use it with arguments that are the commands executed in the container.
+If you use buildsh in non interactive mode, you use it with '-c' option and an argument that is the commands executed in the container.
 
 ```
-$ buildsh php phpunit
+$ buildsh -c 'php phpunit'
 ```
 
 ## Configuration
@@ -66,7 +66,7 @@ $ buildsh php phpunit
 ### .buildsh.yml
 
 Buildsh loads configuration from `.buildsh.yml` in your current working directory. 
-You can also specify the configuration file by using `-c` CLI option.
+You can also specify the configuration file by using `--config` CLI option.
 
 Example:
 
