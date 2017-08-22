@@ -33,7 +33,7 @@ func realMain() (status int) {
 
 	// parse flags...
 	var optVersion, optDebug, optClean, optNoConfig, optCommandString bool
-	var optConfig string
+	var optConfigFile, optConfig string
 	var optEnv stringSlice
 
 	flag.BoolVar(&optVersion, "v", false, "")
@@ -44,6 +44,7 @@ func realMain() (status int) {
 	flag.BoolVar(&optNoConfig, "no-config", false, "")
 	flag.BoolVar(&optCommandString, "c", false, "")
 
+	flag.StringVar(&optConfigFile, "config-file", "", "")
 	flag.StringVar(&optConfig, "config", "", "")
 
 	flag.Var(&optEnv, "e", "")
@@ -64,7 +65,8 @@ Options:
     -c                         Run the commands that are read from the first non-option argument.
     -e, --env <KEY=VALUE>      Set custom environment variables.
     -d, --debug                Use debug mode.
-    --config <FILE>            Load configuration from the FILE instead of .buildsh.yml
+    --config-file <FILE>       Load configuration from the FILE instead of .buildsh.yml
+    --config <STRING>          Load configuration from the STRING instead of .buildsh.yml
     --no-config                Does not use configuration file even if .buildsh.yml is existed.
     --clean                    Remove cache.
     -h, --help                 Show help.
@@ -106,8 +108,8 @@ See also:
 
 	if !optNoConfig {
 		// override config by the config file.
-		if optConfig != "" {
-			p, err := filepath.Abs(optConfig)
+		if optConfigFile != "" {
+			p, err := filepath.Abs(optConfigFile)
 			if err != nil {
 				panic(err)
 			}
@@ -117,6 +119,11 @@ See also:
 				panic(err)
 			}
 
+			if err := yaml.Unmarshal(b, config); err != nil {
+				panic(err)
+			}
+		} else if optConfig != "" {
+			b := []byte(optConfig)
 			if err := yaml.Unmarshal(b, config); err != nil {
 				panic(err)
 			}
