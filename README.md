@@ -12,12 +12,6 @@ Buildsh is docker powered shell that makes it easy to run a script in isolated e
 
 [Download latest version](https://github.com/kohkimakimoto/buildsh/releases/latest)
 
-Or use `go get` command. 
-
-```
-$ go get github.com/kohkimakimoto/buildsh
-```
-
 After installing buildsh, run `buildsh -h` to check working.
 
 ```
