@@ -14,13 +14,9 @@ import (
 	"text/template"
 
 	"github.com/Songmu/wrapcommander"
+	"github.com/kohkimakimoto/buildsh/buildsh"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
-)
-
-var (
-	Version    = "0.9.0"
-	CommitHash = "unknown"
 )
 
 func main() {
@@ -62,7 +58,7 @@ in isolated environment for building, testing and deploying softwares.
 The MIT License (MIT)
 Kohki Makimoto <kohki.makimoto@gmail.com>
 
-version ` + Version + ` (` + CommitHash + `)
+version ` + buildsh.Version + ` (` + buildsh.CommitHash + `)
 
 Options:
     -c                         Run the commands that are read from the first non-option argument.
@@ -95,7 +91,7 @@ See also:
 	flag.Parse()
 
 	if optVersion {
-		fmt.Println("buildsh version " + Version + " (" + CommitHash + ")")
+		fmt.Println("buildsh version " + buildsh.Version + " (" + buildsh.CommitHash + ")")
 		return 0
 	}
 

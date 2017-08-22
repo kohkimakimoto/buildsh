@@ -1,4 +1,4 @@
-.PHONY: help build fmt
+.PHONY:help dev dist packaging fmt deps deps_update
 .DEFAULT_GOAL := help
 
 # this is a magic code to output help message at default
@@ -6,28 +6,49 @@
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
-build: ## Build dist binaries.
-	rm -rf dist
-	gox \
-	  -os="linux darwin windows" \
-	  -arch="amd64" \
-	  -ldflags=" -w \
-	    -X main.CommitHash=`git log --pretty=format:%H -n 1`" \
-	  -output "dist/buildsh_{{.OS}}_{{.Arch}}" \
-	  .
-	cd dist && \
-	  mv buildsh_darwin_amd64 buildsh && zip buildsh_darwin_amd64.zip buildsh && rm buildsh && \
-	  mv buildsh_linux_amd64 buildsh && zip buildsh_linux_amd64.zip buildsh && rm buildsh && \
-	  mv buildsh_windows_amd64.exe buildsh.exe && zip buildsh_windows_amd64.zip buildsh.exe && rm buildsh.exe
+dev: ## Build dev binary
+	@bash -c $(CURDIR)/build/scripts/dev.sh
 
-dev:  ## Build dev binaru
-	go build \
-	  -ldflags="-w -X main.CommitHash=`git log --pretty=format:%H -n 1`" \
-	  -o="buildsh" .
+dist: ## Build dist binaries
+	@bash -c $(CURDIR)/build/scripts/dist.sh
 
-deps: ## Update dependences
+packaging: ## Create packages (now support RPM only)
+	@bash -c $(CURDIR)/build/scripts/packaging.sh
+
+clean: ## Clean the built binaries.
+	@bash -c $(CURDIR)/build/scripts/clean.sh
+
+fmt: ## Run `go fmt`
+	go fmt $$(go list ./... | grep -v vendor)
+
+deps: ## Install dependences by using glide
+	glide install
+
+deps_update:  ## Update dependences by using glide
 	glide up
 
-fmt: ## go fmt
-	go fmt $$(go list ./... | grep -v vendor)
+# build: ## Build dist binaries.
+# 	rm -rf dist
+# 	gox \
+# 	  -os="linux darwin windows" \
+# 	  -arch="amd64" \
+# 	  -ldflags=" -w \
+# 	    -X main.CommitHash=`git log --pretty=format:%H -n 1`" \
+# 	  -output "dist/buildsh_{{.OS}}_{{.Arch}}" \
+# 	  .
+# 	cd dist && \
+# 	  mv buildsh_darwin_amd64 buildsh && zip buildsh_darwin_amd64.zip buildsh && rm buildsh && \
+# 	  mv buildsh_linux_amd64 buildsh && zip buildsh_linux_amd64.zip buildsh && rm buildsh && \
+# 	  mv buildsh_windows_amd64.exe buildsh.exe && zip buildsh_windows_amd64.zip buildsh.exe && rm buildsh.exe
+
+# dev:  ## Build dev binaru
+# 	go build \
+# 	  -ldflags="-w -X main.CommitHash=`git log --pretty=format:%H -n 1`" \
+# 	  -o="buildsh" .
+
+# deps: ## Update dependences
+# 	glide up
+
+# fmt: ## go fmt
+# 	go fmt $$(go list ./... | grep -v vendor)
 	
