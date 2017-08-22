@@ -1,0 +1,8 @@
+#!/bin/sh
+
+buildsh --config='
+docker_image: debian:8
+script: |
+  echo "root:password" | chpasswd
+' "$@"
+
