@@ -1,6 +1,6 @@
 #!/bin/sh
 
-buildsh --config='
+exec buildsh --config='
 docker_image: ubuntu:16.04
 script: |
   echo "root:password" | chpasswd

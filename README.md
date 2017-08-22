@@ -120,7 +120,7 @@ You can use buildsh with a wrapper script. It may be convenient for using specif
 ```sh
 #!/bin/sh
 
-buildsh --config='
+exec buildsh --config='
 docker_image: centos:centos7
 script: |
   echo "root:password" | chpasswd
