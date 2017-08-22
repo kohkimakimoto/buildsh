@@ -119,6 +119,22 @@ You can also change default configuration by using environment variable.
 
 ## Tips
 
+### Using Wrapper Script
+
+You can use buildsh with a wrapper script. It may be convenient for using specific containers.
+
+```sh
+#!/bin/sh
+
+buildsh --config='
+docker_image: centos:centos7
+script: |
+  echo "root:password" | chpasswd
+' "$@"
+```
+
+see also [wrappers](https://github.com/kohkimakimoto/buildsh/tree/master/wrappers)
+
 ### Using With Shebang
 
 If you want to create a script file that are executed by buildsh, you can use a trick to interpret shebang with buildsh. See the following example code.
