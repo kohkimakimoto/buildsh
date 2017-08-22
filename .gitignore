@@ -10,7 +10,6 @@ build/outputs/*
 .buildsh/
 cache/
 /dist
-/buildsh
 /.buildsh.yml
 
 !.gitkeep
