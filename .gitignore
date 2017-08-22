@@ -5,6 +5,8 @@ Thumbs.db
 *.iml
 .env
 .vscode/
+.vagrant
+build/outputs/*
 .buildsh/
 cache/
 /dist
