@@ -130,7 +130,7 @@ script: |
 If you create the above script as `buildsh-centos7`, you can run it like the following.
 
 ```sh
-$ buildsh-centos7 -c 'ls -la'
+$ ./buildsh-centos7 -c 'ls -la'
 ```
 
 see also [wrappers](https://github.com/kohkimakimoto/buildsh/tree/master/wrappers)
