@@ -70,14 +70,14 @@ RUN yum -y install \
   && chmod -R 777 "/build"
 
 # Python
-ENV PYTHON_VERSION 3.6.2
+ENV PYTHON_VERSION 3.6.3
 RUN git clone https://github.com/yyuu/pyenv.git /opt/pyenv
 ENV PYENV_ROOT /opt/pyenv
 ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
 RUN pyenv install ${PYTHON_VERSION} && pyenv global ${PYTHON_VERSION} && pyenv rehash
 
 # Node.js
-ENV NODE_VERSION v8.2.1
+ENV NODE_VERSION v8.9.2
 RUN git clone https://github.com/riywo/ndenv /opt/ndenv \
   && git clone https://github.com/riywo/node-build.git /opt/ndenv/plugins/node-build
 ENV NDENV_ROOT /opt/ndenv
@@ -85,13 +85,13 @@ ENV PATH $NDENV_ROOT/shims:$NDENV_ROOT/bin:$PATH
 RUN ndenv install ${NODE_VERSION} && ndenv global ${NODE_VERSION} && ndenv rehash
 # yarn https://yarnpkg.com
 RUN cd /opt \
-  && wget https://yarnpkg.com/latest.tar.gz \
-  && tar zvxf latest.tar.gz \
-  && mv dist yarn
+  && wget https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz \
+  && tar zvxf yarn-v1.3.2.tar.gz \
+  && mv yarn-v1.3.2 yarn
 ENV PATH /opt/yarn/bin:$PATH
 
 # PHP
-ENV PHP_VERSION 7.1.8
+ENV PHP_VERSION 7.1.9
 RUN git clone https://github.com/madumlao/phpenv.git /opt/phpenv \
  && git clone https://github.com/php-build/php-build.git /opt/phpenv/plugins/php-build
 ENV PHPENV_ROOT /opt/phpenv
@@ -119,7 +119,7 @@ ENV PATH $PLENV_ROOT/shims:$PLENV_ROOT/bin:$PATH
 RUN plenv install ${PERL_VERSION} && plenv global ${PERL_VERSION} && plenv rehash
 
 # Go
-ENV GOVERSION 1.8.3
+ENV GOVERSION 1.9.2
 ADD https://storage.googleapis.com/golang/go${GOVERSION}.linux-amd64.tar.gz /tmp/go${GOVERSION}.linux-amd64.tar.gz
 RUN tar -C /usr/local -xzf /tmp/go${GOVERSION}.linux-amd64.tar.gz \
   && rm /tmp/go${GOVERSION}.linux-amd64.tar.gz
@@ -127,8 +127,8 @@ ENV GOPATH /build
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 
 # sudo config
-RUN sed -i -e 's/Defaults[ 	]env_reset/#Defaults    env_reset/' /etc/sudoers \		
-    && sed -i -e 's/Defaults[ 	]secure_path/#Defaults    secure_path/' /etc/sudoers \		
+RUN sed -i -e 's/Defaults[ 	]*env_reset/#Defaults    env_reset/' /etc/sudoers \		
+    && sed -i -e 's/Defaults[ 	]*secure_path/#Defaults    secure_path/' /etc/sudoers \		
     && echo 'Defaults    env_keep += "PATH"' >> /etc/sudoers		
 
 # misc
