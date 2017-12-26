@@ -65,8 +65,9 @@ fi
 # init script
 echo "root:password" | chpasswd
 export BUILDSH_CACHEDIR=/build/.buildsh/cache
-mkdir -p $BUILDSH_CACHEDIR
-chmod 777 $BUILDSH_CACHEDIR
+# Do not create directory at default.
+# mkdir -p $BUILDSH_CACHEDIR
+# chmod 777 $BUILDSH_CACHEDIR
 
 # cmd
 {}
