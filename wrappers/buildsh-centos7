@@ -1,8 +1,0 @@
-#!/bin/sh
-
-exec buildsh --config='
-docker_image: centos:centos7
-script: |
-  echo "root:password" | chpasswd
-' "$@"
-

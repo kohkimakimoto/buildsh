@@ -1,0 +1,90 @@
+#!/usr/bin/env python
+from __future__ import division, print_function, absolute_import, unicode_literals
+import argparse
+import os
+import sys
+import subprocess
+
+# functions
+def shell_escape(s):
+    return "'" + s.replace("'", "'\"'\"'") + "'"
+
+# main
+def main():
+    parser = argparse.ArgumentParser(
+        description="dockershell-centos7",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument("-c", dest="cmd", metavar="COMMAND", help="Run the commands in the container.", default="")
+    parser.add_argument("-d", dest="wd", metavar="DIRECTORY", help="If specified, use the given directory as working directory.", default="")
+    args = parser.parse_args()
+
+    cmd = args.cmd
+
+    wd = args.wd
+    if wd == "":
+        wd = os.getcwd()
+
+    uid = os.getuid();
+    gid = os.getgid();
+
+    dockerOptions = " --rm"
+    if cmd == "":
+        dockerOptions += " -i -t"
+
+    realEntrypointCmd = ""
+    if cmd == "":
+        realEntrypointCmd = "exec su buildbot"
+    else:
+        realEntrypointCmd = "exec su buildbot -c {}".format(shell_escape(cmd))
+
+    realEntrypoint = shell_escape("""
+set -e
+
+# Workaround to use 'sudo' with arbitrary user id that is specified host machine.
+# You should set '-e' docker run option like the following:
+#   -e BUILDSH_USER="<user_id>:<group_id>"
+
+# split user_id and group_id
+OLD_IFS="$IFS"
+IFS=:
+arr=($BUILDSH_USER)
+IFS="$OLD_IFS"
+if [ ${{#arr[@]}} -ne 2 ]; then
+    echo "'BUILDSH_USER' must be formatted '<user_id>:<group_id>', but $BUILDSH_USER" 1>&2
+    exit 1
+fi
+
+# create buildbot user
+groupadd --non-unique --gid ${{arr[1]}} buildbot
+useradd --non-unique --uid ${{arr[0]}} --gid ${{arr[1]}} buildbot
+if type sudo >/dev/null 2>&1; then
+    echo 'buildbot	ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+fi
+
+# init script
+echo "root:password" | chpasswd
+
+# cmd
+{}
+""".format(realEntrypointCmd))
+
+    cmdline = "docker run -w /build" \
+         + " -v " + wd + ":/build" \
+         + dockerOptions \
+         + " -e TZ=Asia/Tokyo" \
+         + " -e BUILDSH=1" \
+         + " -e BUILDSH_USER=" + str(uid) + ":" + str(gid) \
+         + " --entrypoint=/bin/bash" \
+         + " ubuntu:16.04" \
+         + " -c " + realEntrypoint \
+         + ""
+
+    # for debugging.
+    # print(cmdline)
+
+    ret = subprocess.call(cmdline,  shell=True)
+    if ret != 0:
+        sys.exit(ret)
+
+if __name__ == '__main__': main()

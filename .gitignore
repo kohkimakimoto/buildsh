@@ -6,10 +6,6 @@ Thumbs.db
 .env
 .vscode/
 .vagrant
-build/outputs/*
 .buildsh/
-cache/
-/dist
-/.buildsh.yml
 
 !.gitkeep
