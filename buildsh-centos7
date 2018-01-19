@@ -12,7 +12,7 @@ def shell_escape(s):
 # main
 def main():
     parser = argparse.ArgumentParser(
-        description="dockershell-centos7",
+        description="buildsh-centos7",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument("-c", dest="cmd", metavar="COMMAND", help="Run the commands in the container.", default="")

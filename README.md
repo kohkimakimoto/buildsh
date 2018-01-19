@@ -1,6 +1,6 @@
 # Buildsh
 
-Several script files make it easy to run a script in an isolated docker container for building, testing and deploying softwares. 
+Several script files make it easy to run commands in an isolated docker container for building, testing and deploying softwares.
 
 ## Requirements
 
