@@ -77,7 +77,7 @@ ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
 RUN pyenv install ${PYTHON_VERSION} && pyenv global ${PYTHON_VERSION} && pyenv rehash
 
 # Node.js
-ENV NODE_VERSION v8.9.2
+ENV NODE_VERSION v8.11.3
 RUN git clone https://github.com/riywo/ndenv /opt/ndenv \
   && git clone https://github.com/riywo/node-build.git /opt/ndenv/plugins/node-build
 ENV NDENV_ROOT /opt/ndenv
@@ -91,7 +91,7 @@ RUN cd /opt \
 ENV PATH /opt/yarn/bin:$PATH
 
 # PHP
-ENV PHP_VERSION 7.1.9
+ENV PHP_VERSION 7.2.8
 RUN git clone https://github.com/madumlao/phpenv.git /opt/phpenv \
  && git clone https://github.com/php-build/php-build.git /opt/phpenv/plugins/php-build
 ENV PHPENV_ROOT /opt/phpenv
