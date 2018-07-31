@@ -54,6 +54,9 @@ RUN yum -y install \
   libtidy-devel \
   libxslt \
   libxslt-devel \
+  libXrender \
+  libXext \
+  fontconfig-devel \
   file \
   file-devel \
   bison \
@@ -111,7 +114,7 @@ RUN rbenv install ${RUBY_VERSION} && rbenv global ${RUBY_VERSION} && rbenv rehas
 RUN gem install bundler
 
 # Perl
-ENV PERL_VERSION 5.25.10
+ENV PERL_VERSION 5.28.0
 RUN git clone https://github.com/tokuhirom/plenv.git /opt/plenv \
   && git clone https://github.com/tokuhirom/Perl-Build.git /opt/plenv/plugins/perl-build
 ENV PLENV_ROOT /opt/plenv
