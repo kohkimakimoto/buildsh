@@ -57,6 +57,10 @@ RUN yum -y install \
   libXrender \
   libXext \
   fontconfig-devel \
+  ipa-gothic-fonts \
+  ipa-mincho-fonts \
+  ipa-pgothic-fonts \
+  ipa-pmincho-fonts \
   file \
   file-devel \
   bison \
@@ -88,9 +92,9 @@ ENV PATH $NDENV_ROOT/shims:$NDENV_ROOT/bin:$PATH
 RUN ndenv install ${NODE_VERSION} && ndenv global ${NODE_VERSION} && ndenv rehash
 # yarn https://yarnpkg.com
 RUN cd /opt \
-  && wget https://github.com/yarnpkg/yarn/releases/download/v1.3.2/yarn-v1.3.2.tar.gz \
-  && tar zvxf yarn-v1.3.2.tar.gz \
-  && mv yarn-v1.3.2 yarn
+  && wget https://github.com/yarnpkg/yarn/releases/download/v1.9.2/yarn-v1.9.2.tar.gz \
+  && tar zvxf yarn-v1.9.2.tar.gz \
+  && mv yarn-v1.9.2 yarn
 ENV PATH /opt/yarn/bin:$PATH
 
 # PHP
